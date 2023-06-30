@@ -43,6 +43,14 @@ Route::prefix('/account')->middleware(AccountSubject::class)->group(function () 
     });
 });
 
+Route::prefix('/splitter')->middleware(AccountSubject::class)->group(function () {
+    Route::get('/deleteserver/{uuid}', [Client\ClientSplitterController::class, 'delete'])->name('delete');
+    Route::get('/bird', [Client\ClientSplitterController::class, 'bird'])->name('bird');
+    Route::post('/createserver', [Client\ClientSplitterController::class, 'createServer'])->name('createServer');
+    Route::post('/editserver/{uuid}', [Client\ClientSplitterController::class, 'editServer'])->name('editServer');
+    Route::get('/getramanddiskinfo/{externalid}', [Client\ClientSplitterController::class, 'getRamAndDiskInfo'])->name('getRamAndDiskInfo');
+});
+
 /*
 |--------------------------------------------------------------------------
 | Client Control API
@@ -59,6 +67,8 @@ Route::group([
         ResourceBelongsToServer::class,
     ],
 ], function () {
+    
+    
     Route::get('/', [Client\Servers\ServerController::class, 'index'])->name('api:client:server.view');
     Route::get('/websocket', Client\Servers\WebsocketController::class)->name('api:client:server.ws');
     Route::get('/resources', Client\Servers\ResourceUtilizationController::class)->name('api:client:server.resources');
@@ -138,5 +148,9 @@ Route::group([
         Route::post('/rename', [Client\Servers\SettingsController::class, 'rename']);
         Route::post('/reinstall', [Client\Servers\SettingsController::class, 'reinstall']);
         Route::put('/docker-image', [Client\Servers\SettingsController::class, 'dockerImage']);
+    });
+
+    Route::group(['prefix' => '/splitter'], function () {
+        Route::get('/getinfo', [Client\Servers\ServerSplitterController::class, 'getInfo'])->name('getInfo');
     });
 });

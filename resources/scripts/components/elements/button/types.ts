@@ -5,6 +5,7 @@ enum Shape {
 
 enum Size {
     Default,
+    XSmall,
     Small,
     Large,
 }

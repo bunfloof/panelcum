@@ -14,6 +14,7 @@ export interface Allocation {
 export interface Server {
     id: string;
     internalId: number | string;
+    externalId: number | string;
     uuid: string;
     name: string;
     node: string;
@@ -34,6 +35,8 @@ export interface Server {
         cpu: number;
         threads: string;
     };
+    nestId: number;
+    eggId: number;
     eggFeatures: string[];
     featureLimits: {
         databases: number;
@@ -48,6 +51,7 @@ export interface Server {
 export const rawDataToServerObject = ({ attributes: data }: FractalResponseData): Server => ({
     id: data.identifier,
     internalId: data.internal_id,
+    externalId: data.external_id,
     uuid: data.uuid,
     name: data.name,
     node: data.node,
@@ -61,6 +65,8 @@ export const rawDataToServerObject = ({ attributes: data }: FractalResponseData)
     },
     description: data.description ? (data.description.length > 0 ? data.description : null) : null,
     limits: { ...data.limits },
+    nestId: data.nest_id,
+    eggId: data.egg_id,
     eggFeatures: data.egg_features || [],
     featureLimits: { ...data.feature_limits },
     isTransferring: data.is_transferring,

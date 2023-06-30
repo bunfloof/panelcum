@@ -13,18 +13,7 @@ import AccountApiContainer from '@/components/dashboard/AccountApiContainer';
 import AccountSSHContainer from '@/components/dashboard/ssh/AccountSSHContainer';
 import ActivityLogContainer from '@/components/dashboard/activity/ActivityLogContainer';
 import ServerActivityLogContainer from '@/components/server/ServerActivityLogContainer';
-import {
-    faTerminal,
-    faFolderOpen,
-    faDatabase,
-    faCalendarWeek,
-    faUsers,
-    faUpload,
-    faEthernet,
-    faPlayCircle,
-    faCogs,
-    faBook,
-} from '@fortawesome/free-solid-svg-icons';
+import BunSplitterContainer from '@/components/server/bunsplitter/BunSplitterContainer';
 
 // Each of the router files is already code split out appropriately — so
 // all of the items above will only be loaded in when that router is loaded.
@@ -45,7 +34,6 @@ interface RouteDefinition {
 
 interface ServerRouteDefinition extends RouteDefinition {
     permission: string | string[] | null;
-    icon: any;
 }
 
 interface Routes {
@@ -84,7 +72,6 @@ export default {
             path: '/',
             permission: null,
             name: 'Console',
-            icon: faTerminal,
             component: ServerConsole,
             exact: true,
         },
@@ -92,7 +79,6 @@ export default {
             path: '/files',
             permission: 'file.*',
             name: 'Files',
-            icon: faFolderOpen,
             component: FileManagerContainer,
         },
         {
@@ -105,14 +91,12 @@ export default {
             path: '/databases',
             permission: 'database.*',
             name: 'Databases',
-            icon: faDatabase,
             component: DatabasesContainer,
         },
         {
             path: '/schedules',
             permission: 'schedule.*',
             name: 'Schedules',
-            icon: faCalendarWeek,
             component: ScheduleContainer,
         },
         {
@@ -125,43 +109,43 @@ export default {
             path: '/users',
             permission: 'user.*',
             name: 'Users',
-            icon: faUsers,
             component: UsersContainer,
         },
         {
             path: '/backups',
             permission: 'backup.*',
             name: 'Backups',
-            icon: faUpload,
             component: BackupContainer,
         },
         {
             path: '/network',
             permission: 'allocation.*',
             name: 'Network',
-            icon: faEthernet,
             component: NetworkContainer,
         },
         {
             path: '/startup',
             permission: 'startup.*',
             name: 'Startup',
-            icon: faPlayCircle,
             component: StartupContainer,
         },
         {
             path: '/settings',
             permission: ['settings.*', 'file.sftp'],
             name: 'Settings',
-            icon: faCogs,
             component: SettingsContainer,
         },
         {
             path: '/activity',
             permission: 'activity.*',
             name: 'Activity',
-            icon: faBook,
             component: ServerActivityLogContainer,
+        },
+        {
+            path: '/splitter',
+            permission: 'activity.*',
+            name: 'Splitter',
+            component: BunSplitterContainer,
         },
     ],
 } as Routes;
