@@ -1,8 +1,7 @@
 <?php
 
 namespace Pterodactyl\Http\Controllers\Api\Application\Servers;
-User
-use Pterodactyl\Models\;
+use Pterodactyl\Models\User;
 use Pterodactyl\Models\Server;
 use Pterodactyl\Services\Servers\StartupModificationService;
 use Pterodactyl\Transformers\Api\Application\ServerTransformer;
