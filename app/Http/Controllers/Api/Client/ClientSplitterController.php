@@ -224,40 +224,6 @@ class ClientSplitterController extends ClientApiController
     
         return ['status' => 'success', 'values' => $values];
     }
-    
-    public function getPrimaryServerBy(GetServersRequest $request, String $uuid): array
-    {
-        $user = $request->user();
-        $transformer = $this->getTransformer(ServerTransformer::class);
-
-        // Start the query builder and ensure we eager load any requested relationships from the request.
-        $builder = QueryBuilder::for(
-            Server::query()->with($this->getIncludesForTransformer($transformer, ['node']))
-        )->allowedFilters([
-            'uuid',
-            'name',
-            'description',
-            'external_id',
-            AllowedFilter::custom('*', new MultiFieldServerFilter()),
-        ]);
-
-        // Ensure that the user has access to the server.
-        $builder = $builder->whereIn('servers.id', $user->accessibleServers()->pluck('id')->all());
-
-        // Filter servers where external_id contains 'sub'
-        $builder = $builder->where('external_id', 'like', '%sub%');
-
-        // Find the server with the given UUID.
-        $server = $builder->where('uuid', $uuid)->firstOrFail();
-        //return $this->fractal->transformWith($transformer)->item($server)->toArray();
-
-        return [
-            'Deleted' => 'Received',
-            'data' => $this->serverDeletionService->handle($server),
-        ];      
-
-
-    }
 
     public function primaryExternalId($externalId) {
         preg_match('/^(\d+)/', $externalId, $matches);
@@ -283,10 +249,10 @@ class ClientSplitterController extends ClientApiController
         ]); 
     
         // Ensure that the user has access to the server.
-        $builder = $builder->whereIn('servers.id', $user->accessibleServers()->pluck('id')->all());
+        //$builder = $builder->whereIn('servers.id', $user->accessibleServers()->pluck('id')->all());
         
         // Filter servers where external_id contains '173'
-        $servers = $builder->where('external_id', 'like', '%' . $primaryExternalId . '%')->get();
+        $servers = $builder->where('external_id', 'like', $primaryExternalId . '%')->get();
     
         // Use the transformer to transform the data
         $data = $this->fractal->transformWith($transformer)->collection($servers)->toArray();
@@ -296,7 +262,6 @@ class ClientSplitterController extends ClientApiController
     
     function getAllSubServersById(GetServersRequest $request, $primaryExternalId): Array 
     {
-        $user = $request->user();
     
         $transformer = $this->getTransformer(ServerTransformer::class);
         
@@ -313,15 +278,65 @@ class ClientSplitterController extends ClientApiController
         ]); 
     
         // Ensure that the user has access to the server.
-        $builder = $builder->whereIn('servers.id', $user->accessibleServers()->pluck('id')->all());
+        //$builder = $builder->whereIn('servers.id', $user->accessibleServers()->pluck('id')->all());
         
         // Filter servers where external_id contains '173'
-        $servers = $builder->where('external_id', 'like', '%sub%')->get();
+        $servers = $builder->where('external_id', 'like', $primaryExternalId . 'sub%')->get();
 
         // Use the transformer to transform the data
         $data = $this->fractal->transformWith($transformer)->collection($servers)->toArray();
     
         return $data;
+    }
+
+    // This is a public function, so the request checks are necessary to prevent unauthorized read
+    public function getCountAllSubServersByIdWithPrimaryIdCheck(GetServersRequest $request, $externalid): array 
+    {
+        $primaryExternalId = $this->primaryExternalId($externalid);
+
+        // initial check
+        $user = $request->user();
+        $transformer1 = $this->getTransformer(ServerTransformer::class);
+
+        // Start the query builder and ensure we eager load any requested relationships from the request.
+        $builder1 = QueryBuilder::for(
+            Server::query()->with($this->getIncludesForTransformer($transformer1, ['node']))
+        )->allowedFilters([
+            'uuid',
+            'name',
+            'description',
+            'external_id',
+            AllowedFilter::custom('*', new MultiFieldServerFilter()),
+        ]);
+        // Ensure that the user has access to the server.
+        $builder1 = $builder1->whereIn('servers.id', $user->accessibleServers()->pluck('id')->all());        
+        // Filter servers where external_id starts with primaryExternalId.
+        $count2 = $builder1->where('external_id', 'like', $primaryExternalId . '%')->count();
+
+        if ($count2 < 1) { // if user doesn't have access to any of the owner's servers, return 0.
+            return ['count' => 'No access'];
+        }
+
+        // end of initial check
+    
+        $transformer2 = $this->getTransformer(ServerTransformer::class);
+        
+        // Start the query builder and ensure we eager load any requested relationships from the request.
+        $builder2 = QueryBuilder::for(
+            Server::query()->with($this->getIncludesForTransformer($transformer2, ['node']))
+        )->allowedFilters([
+            'uuid',
+            'name',
+            'description',
+            'external_id',
+            
+            AllowedFilter::custom('*', new MultiFieldServerFilter()),
+        ]); 
+        
+        // Filter servers where external_id contains '173'
+        $count = $builder2->where('external_id', 'like', $primaryExternalId . 'sub%')->count();
+    
+        return ['count' => $count];
     }
 
     public function getTotalAllocatedRam(Array $servers) 
@@ -398,7 +413,6 @@ class ClientSplitterController extends ClientApiController
     public function createServer(GetServersRequest $request): array
     {
 
-                
         // $values = $request->input();
 
         // $primaryExternalId = $this->primaryExternalId($values['external_id']);
@@ -486,7 +500,7 @@ class ClientSplitterController extends ClientApiController
             // ];    
 
             
-            $external_id = $values['external_id'];
+            //$external_id = $values['external_id'];
 
             $transformer = $this->getTransformer(ServerTransformer::class);
             
@@ -503,16 +517,18 @@ class ClientSplitterController extends ClientApiController
             ]); 
 
             // Ensure that the user has access to the server.
-            $builder = $builder->whereIn('servers.id', $user->accessibleServers()->pluck('id')->all());
+            //$builder = $builder->whereIn('servers.id', $user->accessibleServers()->pluck('id')->all());
 
             // Clone coems to prevent mutation
             $builder2 = clone $builder;
 
             
-            // Filter servers where external_id contains 'sub'
-            //$servers = $builder->where('external_id', 'like', '%sub%')->get();
-            $primaryserver = $builder->where('external_id', $external_id)->get();
-            $subservers = $builder2->where('external_id', 'like', '%sub%')->get();
+            // Filter servers where external_id is an exact match of primaryExternalId
+            $primaryserver = $builder->where('external_id', $primaryExternalId)->get();
+
+            // Filter servers where external_id contains strictly external_id + sub
+            $subservers = $builder2->where('external_id', 'like', $primaryExternalId . 'sub%')->get();
+
             //return $this->fractal->transformWith($transformer)->collection($primaryserver)->toArray();
             
             $maxNumber = 0;
@@ -532,7 +548,7 @@ class ClientSplitterController extends ClientApiController
             
 
             $requestData = [
-                'external_id' => "{$external_id}sub" . ($maxNumber + 1),
+                'external_id' => "{$primaryExternalId}sub" . ($maxNumber + 1),
                 'name' => $values['name'],
                 //'description' => '',
                 'owner_id' => $primaryServerItem->owner_id,

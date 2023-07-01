@@ -77,7 +77,7 @@ export default () => {
         if (!externalid) {
             // || externalid?.toString().includes('sub')
             //console.log('External ID is blank or contains "sub". Skipping API call.');
-            setErrorMessage('Not a WHMCS server');
+            setErrorMessage('😭 Not a WHMCS server');
             return;
         }
 
@@ -110,14 +110,10 @@ export default () => {
                 setIsLoading(false); // Set loading to false when fetch operation has completed
             });
 
-        http.get(`/api/client/`)
+        http.get(`/api/client/splitter/getcountallsubserversbyidwithprimaryidcheck/${externalid}`)
             .then((response) => {
-                //console.log('Received data:', response.data);
-                const subServerCount = response.data.data.filter(
-                    (server: { attributes: { external_id: string | string[] } }) =>
-                        server.attributes.external_id.includes(externalid.toString() + 'sub')
-                ).length;
-                setSplitterCount(subServerCount);
+                //console.log('cum count data:', response.data);
+                setSplitterCount(response.data['count']);
             })
             .catch((error) => {
                 console.error('There has been a problem with your fetch operation:', error);

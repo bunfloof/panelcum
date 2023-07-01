@@ -22,6 +22,7 @@ import { Button as BadgeButton } from '@/components/elements/button/index';
 import Button from '@/components/elements/Button';
 import DeleteServerModal from '@/components/server/bunsplitter/DeleteServerModal';
 import EditServerModal from '@/components/server/bunsplitter/EditServerModal';
+import SyncSubusersModal from '@/components/server/bunsplitter/SyncSubusersModal';
 
 // Determines if the current value is in an alarm threshold so we can show it in red rather
 // than the more faded default style.
@@ -72,6 +73,9 @@ export default ({
     refreshServerList: () => void;
     refreshServerDetails: () => void;
 }) => {
+    if (!server.externalId) {
+        server.externalId = 'Not a WHMCS server';
+    }
     const interval = useRef<Timer>(null) as React.MutableRefObject<Timer>;
     const [isSuspended, setIsSuspended] = useState(server.status === 'suspended');
     const [stats, setStats] = useState<ServerStats | null>(null);
@@ -168,6 +172,13 @@ export default ({
                                 refreshServerList={refreshServerList}
                                 refreshServerDetails={refreshServerDetails}
                             />
+                        </div>
+                    </div>
+                    <div>
+                        <div css={tw`ml-2`}>
+                            {server.externalId.toString().includes('sub') && (
+                                <SyncSubusersModal serverUuid={server.uuid} serverName={server.name} />
+                            )}
                         </div>
                     </div>
                 </div>

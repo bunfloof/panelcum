@@ -61,7 +61,6 @@ const EditSubuserModal = ({ subuser }: Props) => {
     const submit = (values: Values) => {
         setPropOverrides({ showSpinnerOverlay: true });
         clearFlashes('user:edit');
-
         createOrUpdateSubuser(uuid, values, subuser)
             .then((subuser) => {
                 appendSubuser(subuser);

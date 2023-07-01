@@ -49,6 +49,7 @@ Route::prefix('/splitter')->middleware(AccountSubject::class)->group(function ()
     Route::post('/createserver', [Client\ClientSplitterController::class, 'createServer'])->name('createServer');
     Route::post('/editserver/{uuid}', [Client\ClientSplitterController::class, 'editServer'])->name('editServer');
     Route::get('/getramanddiskinfo/{externalid}', [Client\ClientSplitterController::class, 'getRamAndDiskInfo'])->name('getRamAndDiskInfo');
+    Route::get('/getcountallsubserversbyidwithprimaryidcheck/{externalid}', [Client\ClientSplitterController::class, 'getCountAllSubServersByIdWithPrimaryIdCheck'])->name('getCountAllSubServersByIdWithPrimaryIdCheck');
 });
 
 /*
