@@ -5,7 +5,40 @@
 ![GitHub Releases](https://img.shields.io/github/downloads/pterodactyl/panel/latest/total?style=for-the-badge)
 ![GitHub contributors](https://img.shields.io/github/contributors/pterodactyl/panel?style=for-the-badge)
 
-# Pterodactyl Panel
+# Pterodactyl Panel with Modifications
+
+⚠️ **Trade Offer** ⚠️
+
+I receive: free Minecraft server. You receive: improvements to panel.
+
+As a Minecraft server freeloader (I get free servers🤑 to download **4K furry porn**), I make improvements to Pterodactyl Panel based on **public** customer feedback from both FurryHost and Foxomy, so ask away in their Discord servers/Review sites/any public platform. 
+
+**Please contact me directly or open issues here if you experience any bugs.** **Do not contact these companies for billing related issues as I do not have administrative access to their billing panel.**
+
+# Modifications
+
+## 🤤🤤🤤 Container splitter
+
+Features:
+    
+- Create containers
+- Delete containers
+- Edit game type
+- Sync subuser permissions
+
+Manage resource limits for each user using set config options from WHMCS. Append and fill the following lines to `.env`:
+```
+WHMCS_HOST=
+WHMCS_PORT=
+WHMCS_DATABASE_USER=
+WHMCS_DATABASE_PASSWORD=
+WHMCS_DATABASE_NAME=
+```
+(It is recommended to create a READ-ONLY user with SELECT privileges only on your WHMCS MySQL database.)
+
+![Image](https://cdn1.cdn.pet/n6EXnlOvgvMCBFP.gif)
+
+# Description
 
 Pterodactyl® is a free, open-source game server management panel built with PHP, React, and Go. Designed with security 
 in mind, Pterodactyl runs all game servers in isolated Docker containers while exposing a beautiful and intuitive
