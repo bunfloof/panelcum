@@ -14,6 +14,7 @@ import AccountSSHContainer from '@/components/dashboard/ssh/AccountSSHContainer'
 import ActivityLogContainer from '@/components/dashboard/activity/ActivityLogContainer';
 import ServerActivityLogContainer from '@/components/server/ServerActivityLogContainer';
 import BunSplitterContainer from '@/components/server/bunsplitter/BunSplitterContainer';
+import BunMinecraftContainer from '@/components/server/bunminecraft/BunMinecraftContainer';
 
 // Each of the router files is already code split out appropriately — so
 // all of the items above will only be loaded in when that router is loaded.
@@ -74,6 +75,12 @@ export default {
             name: 'Console',
             component: ServerConsole,
             exact: true,
+        },
+        {
+            path: '/minecraft',
+            permission: 'file.*',
+            name: 'Minecraft',
+            component: BunMinecraftContainer,
         },
         {
             path: '/files',
