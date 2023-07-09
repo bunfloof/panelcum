@@ -12,6 +12,7 @@ import StyledField from '@/components/elements/Field';
 import Label from '@/components/elements/Label';
 import Select from '@/components/elements/Select';
 import { Button } from '@/components/elements/button/index';
+import UploadServerIconModal from '@/components/server/bunminecraft/UploadServerIconModal';
 
 const parseProperties = (content: string): { [key: string]: string | boolean } => {
     const lines = content.split('\n');
@@ -31,6 +32,7 @@ const parseProperties = (content: string): { [key: string]: string | boolean } =
                     'pvp',
                     'enable-command-block',
                     'online-mode',
+                    'white-list',
                     'enforce-whitelist',
                 ].includes(key)
             ) {
@@ -142,21 +144,21 @@ export default () => {
             component: FormikSwitch,
         },
         {
-            name: 'whitelist',
-            description: 'Enable or disable whitelist system.',
-            label: 'Whitelist',
+            name: 'white-list',
+            description: 'Enable or disable allow-list system.',
+            label: 'Allow-list',
             component: FormikSwitch,
         },
         {
             name: 'enforce-whitelist',
-            description: 'Enable or whitelist enforcement.',
-            label: 'Enforce whitelist',
+            description: 'Enable or allow-list enforcement.',
+            label: 'Enforce allow-list',
             component: FormikSwitch,
         },
+
         {
             name: 'motd',
-            description: 'Sets the server MOTD.',
-            label: 'Enforce whitelist',
+            label: 'MOTD',
             placeholder: 'A Gay Minecraft Server',
             component: StyledField,
         },
@@ -225,11 +227,43 @@ export default () => {
             });
     };
 
-    const initialValues = parseProperties(content);
+    // useEffect(() => {
+    //     console.log('Initial values:', initialValues);
+    // }, [initialValues]);
 
-    useEffect(() => {
-        console.log('Initial values:', initialValues);
-    }, [initialValues]);
+    // Helper function
+    const renderConfigKeys = (configKeys: ConfigKey[]) => {
+        return configKeys
+            .filter((key: ConfigKey) => Object.prototype.hasOwnProperty.call(properties, key.name))
+            .map((key: ConfigKey) => {
+                if (key.component === Select) {
+                    return (
+                        <div key={key.name}>
+                            {key.label && <Label>{key.label}</Label>}
+                            <Field as={Select} name={key.name}>
+                                {key.options?.map((option) => (
+                                    <option key={option.value} value={option.value}>
+                                        {option.label}
+                                    </option>
+                                ))}
+                            </Field>
+                        </div>
+                    );
+                } else {
+                    return (
+                        <div key={key.name}>
+                            {key.label && <Label>{key.label}</Label>}
+                            {React.createElement(key.component, {
+                                name: key.name,
+                                description: key.description,
+                                placeholder: key.placeholder,
+                                type: key.type,
+                            })}
+                        </div>
+                    );
+                }
+            });
+    };
 
     return (
         <ServerContentBlock title={'Minecraft'}>
@@ -240,111 +274,16 @@ export default () => {
                     {({ isSubmitting }) => (
                         <Form>
                             <CollapsibleTitledGreyBox title={'World'} containerCSS={tw`mb-4`} defaultOpen>
-                                <div css={tw`grid grid-cols-3 gap-4`}>
-                                    {configKeys.map((key) => {
-                                        if (Object.prototype.hasOwnProperty.call(properties, key.name)) {
-                                            if (key.component === Select) {
-                                                return (
-                                                    <div key={key.name}>
-                                                        {key.label && <Label>{key.label}</Label>}
-                                                        <Field as={Select} name={key.name}>
-                                                            {key.options?.map((option) => (
-                                                                <option key={option.value} value={option.value}>
-                                                                    {option.label}
-                                                                </option>
-                                                            ))}
-                                                        </Field>
-                                                    </div>
-                                                );
-                                            } else {
-                                                return (
-                                                    <div key={key.name}>
-                                                        {key.label && <Label>{key.label}</Label>}
-                                                        {React.createElement(key.component, {
-                                                            name: key.name,
-                                                            description: key.description,
-                                                            placeholder: key.placeholder,
-                                                            type: key.type,
-                                                        })}
-                                                    </div>
-                                                );
-                                            }
-                                        }
-                                        return null;
-                                    })}
-                                </div>
+                                <div css={tw`grid grid-cols-3 gap-4`}>{renderConfigKeys(configKeys)}</div>
                             </CollapsibleTitledGreyBox>
 
                             <CollapsibleTitledGreyBox title={'Player'} defaultOpen containerCSS={tw`mb-4`}>
-                                <div css={tw`grid grid-cols-3 gap-4`}>
-                                    {playerConfigKeys.map((key) => {
-                                        if (Object.prototype.hasOwnProperty.call(initialValues, key.name)) {
-                                            if (key.component === Select) {
-                                                return (
-                                                    <div key={key.name}>
-                                                        {key.label && <Label>{key.label}</Label>}
-                                                        <Field as={Select} name={key.name}>
-                                                            {key.options?.map((option) => (
-                                                                <option key={option.value} value={option.value}>
-                                                                    {option.label}
-                                                                </option>
-                                                            ))}
-                                                        </Field>
-                                                    </div>
-                                                );
-                                            } else {
-                                                return (
-                                                    <div key={key.name}>
-                                                        {key.label && <Label>{key.label}</Label>}
-                                                        {React.createElement(key.component, {
-                                                            name: key.name,
-                                                            description: key.description,
-                                                            placeholder: key.placeholder,
-                                                            type: key.type,
-                                                        })}
-                                                    </div>
-                                                );
-                                            }
-                                        }
-                                        return null;
-                                    })}
-                                </div>
+                                <div css={tw`grid grid-cols-3 gap-4`}>{renderConfigKeys(playerConfigKeys)}</div>
                             </CollapsibleTitledGreyBox>
 
                             <CollapsibleTitledGreyBox title={'Server'} defaultOpen>
-                                <div css={tw`grid grid-cols-3 gap-4`}>
-                                    {serverConfigKeys.map((key) => {
-                                        if (Object.prototype.hasOwnProperty.call(initialValues, key.name)) {
-                                            if (key.component === Select) {
-                                                return (
-                                                    <div key={key.name}>
-                                                        {key.label && <Label>{key.label}</Label>}
-                                                        <Field as={Select} name={key.name}>
-                                                            {key.options?.map((option) => (
-                                                                <option key={option.value} value={option.value}>
-                                                                    {option.label}
-                                                                </option>
-                                                            ))}
-                                                        </Field>
-                                                    </div>
-                                                );
-                                            } else {
-                                                return (
-                                                    <div key={key.name}>
-                                                        {key.label && <Label>{key.label}</Label>}
-                                                        {React.createElement(key.component, {
-                                                            name: key.name,
-                                                            description: key.description,
-                                                            placeholder: key.placeholder,
-                                                            type: key.type,
-                                                        })}
-                                                    </div>
-                                                );
-                                            }
-                                        }
-                                        return null;
-                                    })}
-                                </div>
+                                <UploadServerIconModal />
+                                <div css={tw`grid grid-cols-3 gap-4`}>{renderConfigKeys(serverConfigKeys)}</div>
                             </CollapsibleTitledGreyBox>
                             <CollapsibleTitledGreyBox
                                 title={'Other'}
@@ -352,12 +291,14 @@ export default () => {
                                 containerCSS={tw`mb-4 overflow-y-auto`}
                             >
                                 <div css={tw`grid grid-cols-3 gap-4`}>
-                                    {otherKeys.map((key) => (
-                                        <div key={key}>
-                                            <Label>{key}</Label>
-                                            <Field as={StyledField} name={key} />
-                                        </div>
-                                    ))}
+                                    {otherKeys
+                                        .filter((key) => Object.prototype.hasOwnProperty.call(properties, key))
+                                        .map((key) => (
+                                            <div key={key}>
+                                                <Label>{key}</Label>
+                                                <Field as={StyledField} name={key} />
+                                            </div>
+                                        ))}
                                 </div>
                             </CollapsibleTitledGreyBox>
 
