@@ -303,50 +303,60 @@ export default () => {
                 <Formik initialValues={properties} onSubmit={handleFormSubmit}>
                     {(formikProps) => (
                         <Form>
-                            <CollapsibleTitledGreyBox title={'World'} containerCSS={tw`mb-4`} defaultOpen>
-                                <div css={tw`grid grid-cols-3 gap-4`}>{renderConfigKeys(configKeys, formikProps)}</div>
-                                {renderSaveButton(configKeys, formikProps)}
-                            </CollapsibleTitledGreyBox>
+                            {renderConfigKeys(configKeys, formikProps).length > 0 && (
+                                <CollapsibleTitledGreyBox title={'World'} containerCSS={tw`mb-4`} defaultOpen>
+                                    <div css={tw`grid grid-cols-3 gap-4`}>
+                                        {renderConfigKeys(configKeys, formikProps)}
+                                    </div>
+                                    {renderSaveButton(configKeys, formikProps)}
+                                </CollapsibleTitledGreyBox>
+                            )}
 
-                            <CollapsibleTitledGreyBox title={'Player'} defaultOpen containerCSS={tw`mb-4`}>
-                                <div css={tw`grid grid-cols-3 gap-4`}>
-                                    {renderConfigKeys(playerConfigKeys, formikProps)}
-                                </div>
-                                {renderSaveButton(playerConfigKeys, formikProps)}
-                            </CollapsibleTitledGreyBox>
+                            {renderConfigKeys(playerConfigKeys, formikProps).length > 0 && (
+                                <CollapsibleTitledGreyBox title={'Player'} defaultOpen containerCSS={tw`mb-4`}>
+                                    <div css={tw`grid grid-cols-3 gap-4`}>
+                                        {renderConfigKeys(playerConfigKeys, formikProps)}
+                                    </div>
+                                    {renderSaveButton(playerConfigKeys, formikProps)}
+                                </CollapsibleTitledGreyBox>
+                            )}
 
-                            <CollapsibleTitledGreyBox title={'Server'} defaultOpen containerCSS={tw`mb-4`}>
-                                <UploadServerIconModal />
-                                <div css={tw`grid grid-cols-3 gap-4`}>
-                                    {renderConfigKeys(serverConfigKeys, formikProps)}
-                                </div>
-                                {renderSaveButton(serverConfigKeys, formikProps)}
-                            </CollapsibleTitledGreyBox>
+                            {renderConfigKeys(serverConfigKeys, formikProps).length > 0 && (
+                                <CollapsibleTitledGreyBox title={'Server'} defaultOpen containerCSS={tw`mb-4`}>
+                                    <UploadServerIconModal />
+                                    <div css={tw`grid grid-cols-3 gap-4`}>
+                                        {renderConfigKeys(serverConfigKeys, formikProps)}
+                                    </div>
+                                    {renderSaveButton(serverConfigKeys, formikProps)}
+                                </CollapsibleTitledGreyBox>
+                            )}
 
-                            <CollapsibleTitledGreyBox
-                                title={'Other'}
-                                defaultOpen
-                                containerCSS={tw`mb-4 overflow-y-auto`}
-                            >
-                                <div css={tw`grid grid-cols-3 gap-4`}>
-                                    {otherKeys
-                                        .filter((key) => Object.prototype.hasOwnProperty.call(properties, key))
-                                        .map((key) => (
-                                            <div key={key}>
-                                                <Label>{key}</Label>
-                                                <Field as={StyledField} name={key} />
-                                            </div>
-                                        ))}
-                                </div>
-                                {renderSaveButton(
-                                    otherKeys.map((key) => ({
-                                        name: key,
-                                        label: key,
-                                        component: StyledField,
-                                    })),
-                                    formikProps
-                                )}
-                            </CollapsibleTitledGreyBox>
+                            {otherKeys.length > 0 && (
+                                <CollapsibleTitledGreyBox
+                                    title={'Other'}
+                                    defaultOpen
+                                    containerCSS={tw`mb-4 overflow-y-auto`}
+                                >
+                                    <div css={tw`grid grid-cols-3 gap-4`}>
+                                        {otherKeys
+                                            .filter((key) => Object.prototype.hasOwnProperty.call(properties, key))
+                                            .map((key) => (
+                                                <div key={key}>
+                                                    <Label>{key}</Label>
+                                                    <Field as={StyledField} name={key} />
+                                                </div>
+                                            ))}
+                                    </div>
+                                    {renderSaveButton(
+                                        otherKeys.map((key) => ({
+                                            name: key,
+                                            label: key,
+                                            component: StyledField,
+                                        })),
+                                        formikProps
+                                    )}
+                                </CollapsibleTitledGreyBox>
+                            )}
                         </Form>
                     )}
                 </Formik>
