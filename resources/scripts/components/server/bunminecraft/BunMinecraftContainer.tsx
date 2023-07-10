@@ -5,7 +5,7 @@ import tw from 'twin.macro';
 import ServerContentBlock from '@/components/elements/ServerContentBlock';
 import { ServerContext } from '@/state/server';
 import getFileContents from '@/api/server/files/getFileContents';
-import { httpErrorToHuman } from '@/api/http';
+//import { httpErrorToHuman } from '@/api/http';
 import saveFileContents from '@/api/server/files/saveFileContents';
 import FormikSwitch from '@/components/elements/FormikSwitch';
 import StyledField from '@/components/elements/Field';
@@ -22,7 +22,6 @@ const parseProperties = (content: string): { [key: string]: string | boolean } =
             const [key, ...valueParts] = line.split('=');
             const value = valueParts.join('=');
 
-            // parse these specific keys into boolean
             if (
                 [
                     'spawn-monsters',
@@ -58,8 +57,9 @@ interface ConfigKey {
 export default () => {
     const [content, setContent] = useState<string>('');
     const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
-    const [error, setError] = useState<string>('');
+    //const [error, setError] = useState<string>('');
     const [properties, setProperties] = useState<{ [key: string]: string | boolean }>({});
+    const [originalProperties, setOriginalProperties] = useState<{ [key: string]: string | boolean }>({});
 
     const [isLoading, setIsLoading] = useState(true);
 
@@ -92,7 +92,6 @@ export default () => {
         {
             name: 'view-distance',
             label: 'view distance',
-            type: 'number',
             placeholder: '10',
             component: StyledField,
         },
@@ -165,7 +164,6 @@ export default () => {
         {
             name: 'max-players',
             label: 'Player Slots',
-            type: 'number',
             placeholder: '20',
             component: StyledField,
         },
@@ -174,18 +172,19 @@ export default () => {
     const usedKeys = [...configKeys, ...playerConfigKeys, ...serverConfigKeys].map((key) => key.name);
 
     const otherKeys = Object.keys(properties).filter((key) => !usedKeys.includes(key));
-
     useEffect(() => {
-        setError('');
+        //setError('');
         getFileContents(uuid, '/server.properties')
             .then((fetchedContent) => {
                 setContent(fetchedContent);
-                setProperties(parseProperties(fetchedContent));
+                const parsedProperties = parseProperties(fetchedContent);
+                setProperties(parsedProperties);
+                setOriginalProperties(parsedProperties);
                 setIsLoading(false);
             })
             .catch((error: Error) => {
                 console.error(error);
-                setError(httpErrorToHuman(error));
+                //setError(httpErrorToHuman(error));
             });
     }, [uuid]);
 
@@ -200,7 +199,6 @@ export default () => {
             if (line.includes('=')) {
                 const [key] = line.split('=');
                 if (key in values) {
-                    // Convert boolean values to string in case of coems
                     let value = values[key];
                     if (typeof value === 'boolean') {
                         value = value ? 'true' : 'false';
@@ -219,22 +217,32 @@ export default () => {
             .then(() => {
                 setSubmitting(false);
                 setContent(propertiesContent);
+                setProperties(parseProperties(propertiesContent));
+                setOriginalProperties(parseProperties(propertiesContent));
             })
             .catch((error: Error) => {
                 console.error(error);
                 setSubmitting(false);
-                setError(httpErrorToHuman(error));
+                //setError(httpErrorToHuman(error));
             });
+    };
+
+    const checkForChanges = (keys: ConfigKey[], currentValues: { [key: string]: string | boolean }) => {
+        for (const key of keys) {
+            if (originalProperties[key.name] !== currentValues[key.name]) {
+                return true;
+            }
+        }
+        return false;
     };
 
     // useEffect(() => {
     //     console.log('Initial values:', initialValues);
     // }, [initialValues]);
 
-    // Helper function
-    const renderConfigKeys = (configKeys: ConfigKey[]) => {
-        return configKeys
-            .filter((key: ConfigKey) => Object.prototype.hasOwnProperty.call(properties, key.name))
+    const renderConfigKeys = (configKeys: ConfigKey[], formikProps: any) => {
+        const jsxComponents = configKeys
+            .filter((key: ConfigKey) => Object.prototype.hasOwnProperty.call(formikProps.values, key.name))
             .map((key: ConfigKey) => {
                 if (key.component === Select) {
                     return (
@@ -263,28 +271,58 @@ export default () => {
                     );
                 }
             });
+
+        return jsxComponents;
+    };
+
+    const renderSaveButton = (configKeys: ConfigKey[], formikProps: any) => {
+        // Save changes button
+        if (checkForChanges(configKeys, formikProps.values)) {
+            return (
+                <div key='saveButton' css={tw`mt-6 sm:flex items-center justify-end`}>
+                    {!formikProps.isSubmitting ? <p>You have unsaved changes</p> : <p>Changes saved</p>}
+                    <Button
+                        type='submit'
+                        disabled={formikProps.isSubmitting}
+                        onClick={formikProps.handleSubmit}
+                        css={tw`ml-2`}
+                    >
+                        Save changes
+                    </Button>
+                </div>
+            );
+        }
+        return null;
     };
 
     return (
         <ServerContentBlock title={'Minecraft'}>
             {isLoading ? (
-                <p>Loading...</p>
+                <p>Reading your server.properties file...</p>
             ) : (
                 <Formik initialValues={properties} onSubmit={handleFormSubmit}>
-                    {({ isSubmitting }) => (
+                    {(formikProps) => (
                         <Form>
                             <CollapsibleTitledGreyBox title={'World'} containerCSS={tw`mb-4`} defaultOpen>
-                                <div css={tw`grid grid-cols-3 gap-4`}>{renderConfigKeys(configKeys)}</div>
+                                <div css={tw`grid grid-cols-3 gap-4`}>{renderConfigKeys(configKeys, formikProps)}</div>
+                                {renderSaveButton(configKeys, formikProps)}
                             </CollapsibleTitledGreyBox>
 
                             <CollapsibleTitledGreyBox title={'Player'} defaultOpen containerCSS={tw`mb-4`}>
-                                <div css={tw`grid grid-cols-3 gap-4`}>{renderConfigKeys(playerConfigKeys)}</div>
+                                <div css={tw`grid grid-cols-3 gap-4`}>
+                                    {renderConfigKeys(playerConfigKeys, formikProps)}
+                                </div>
+                                {renderSaveButton(playerConfigKeys, formikProps)}
                             </CollapsibleTitledGreyBox>
 
-                            <CollapsibleTitledGreyBox title={'Server'} defaultOpen>
+                            <CollapsibleTitledGreyBox title={'Server'} defaultOpen containerCSS={tw`mb-4`}>
                                 <UploadServerIconModal />
-                                <div css={tw`grid grid-cols-3 gap-4`}>{renderConfigKeys(serverConfigKeys)}</div>
+                                <div css={tw`grid grid-cols-3 gap-4`}>
+                                    {renderConfigKeys(serverConfigKeys, formikProps)}
+                                </div>
+                                {renderSaveButton(serverConfigKeys, formikProps)}
                             </CollapsibleTitledGreyBox>
+
                             <CollapsibleTitledGreyBox
                                 title={'Other'}
                                 defaultOpen
@@ -300,13 +338,15 @@ export default () => {
                                             </div>
                                         ))}
                                 </div>
+                                {renderSaveButton(
+                                    otherKeys.map((key) => ({
+                                        name: key,
+                                        label: key,
+                                        component: StyledField,
+                                    })),
+                                    formikProps
+                                )}
                             </CollapsibleTitledGreyBox>
-
-                            <div css={tw`mt-6 sm:flex items-center justify-end`}>
-                                <Button type='submit' disabled={isSubmitting}>
-                                    Save
-                                </Button>
-                            </div>
                         </Form>
                     )}
                 </Formik>
