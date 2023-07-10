@@ -79,7 +79,7 @@ export default {
         {
             path: '/minecraft',
             permission: 'file.*',
-            name: 'Minecraft',
+            name: 'Config',
             component: BunMinecraftContainer,
         },
         {
