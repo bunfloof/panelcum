@@ -1,0 +1,25 @@
+{
+  "name": "th3shadowbroker/spiget4php",
+  "description": "PHP-wrapper for the spiget.org-api.",
+  "minimum-stability": "stable",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Th3Shadowbroker",
+      "email": "webmaster@m4taiori.de"
+    }
+  ],
+  "autoload":
+  {
+    "classmap": ["Exceptions/SpigetException.php", "SpigetAPI.php"],
+    "files": ["Environment/Constants.php"]
+  },
+  "require":
+  {
+    "ext-json": "*",
+    "ext-curl": "*"
+  },
+  "suggest": {
+    "th3shadowbroker/spiget4php-obj": "^1.0.5"
+  }
+}

@@ -52,6 +52,10 @@ Route::prefix('/splitter')->middleware(AccountSubject::class)->group(function ()
     Route::get('/getcountallsubserversbyidwithprimaryidcheck/{externalid}', [Client\ClientSplitterController::class, 'getCountAllSubServersByIdWithPrimaryIdCheck'])->name('getCountAllSubServersByIdWithPrimaryIdCheck');
 });
 
+Route::prefix('/plugins')->middleware(AccountSubject::class)->group(function () {
+    Route::get('/getsearchplugins', [Client\Servers\PluginsController::class, 'getSearchPlugins'])->name('getSearchPlugins');
+});
+
 /*
 |--------------------------------------------------------------------------
 | Client Control API
@@ -154,4 +158,5 @@ Route::group([
     Route::group(['prefix' => '/splitter'], function () {
         Route::get('/getinfo', [Client\Servers\ServerSplitterController::class, 'getInfo'])->name('getInfo');
     });
+    
 });
