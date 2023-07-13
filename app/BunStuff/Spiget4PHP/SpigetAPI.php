@@ -35,7 +35,6 @@ require_once 'Exceptions/SpigetException.php';
 require_once 'Environment/Constants.php';
 
 use Pterodactyl\BunStuff\Spiget4PHP\exceptions\SpigetException as SpigetException;
-use Illuminate\Support\Facades\Log;
 
 /**
  * This is the main-class of spiget4php.

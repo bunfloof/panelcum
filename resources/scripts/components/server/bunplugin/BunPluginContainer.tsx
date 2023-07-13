@@ -24,7 +24,7 @@ export default () => {
     const debouncedSearch = useCallback(
         _.debounce((text) => setSearchText(text), 500),
         []
-    );
+    ); //test
 
     const lastPluginRef = useCallback(
         (node) => {
@@ -53,7 +53,7 @@ export default () => {
                 size: 10,
                 page: page,
                 sort: sort,
-                fields: 'file,icon.url,name,tag,releaseDate,updateDate,downloads,rating',
+                fields: 'file,icon.data,name,tag,releaseDate,updateDate,downloads,rating,id,version',
             },
         }).then((res) => {
             const data = res.data.results; // access the results array
@@ -78,18 +78,47 @@ export default () => {
                     />
                 </InputSpinner>
                 <div>
-                    <button onClick={() => setSort('-downloads')}>Downloads</button>
-                    <button onClick={() => setSort('-rating.average')}>Rating</button>
-                    <button onClick={() => setSort('-releaseDate')}>Release Date</button>
-                    <button onClick={() => setSort('-updateDate')}>Update Date</button>
+                    <button
+                        onClick={() => {
+                            setSort('-downloads');
+                            setPage(1);
+                        }}
+                    >
+                        Downloads
+                    </button>
+                    <button
+                        onClick={() => {
+                            setSort('-rating.average');
+                            setPage(1);
+                        }}
+                    >
+                        Rating
+                    </button>
+                    <button
+                        onClick={() => {
+                            setSort('-releaseDate');
+                            setPage(1);
+                        }}
+                    >
+                        Release Date
+                    </button>
+                    <button
+                        onClick={() => {
+                            setSort('-updateDate');
+                            setPage(1);
+                        }}
+                    >
+                        Update Date
+                    </button>
                 </div>
                 {plugins.map((plugin, index) => {
                     if (plugins.length === index + 1) {
-                        return <PluginRow innerRef={lastPluginRef} key={plugin.id} plugin={plugin} />;
+                        return <PluginRow innerRef={lastPluginRef} key={plugin.id} plugin={plugin} serveruuid={uuid} />;
                     } else {
-                        return <PluginRow key={plugin.id} plugin={plugin} />;
+                        return <PluginRow key={plugin.id} plugin={plugin} serveruuid={uuid} />;
                     }
                 })}
+
                 <div>{loading && 'Loading...'}</div>
             </ServerContentBlock>
         </>
