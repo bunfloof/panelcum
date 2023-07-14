@@ -1,12 +1,13 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { ServerContext } from '@/state/server';
-import { useStoreState } from 'easy-peasy';
 import ServerContentBlock from '@/components/elements/ServerContentBlock';
 import PluginRow from './PluginRow';
 import _ from 'lodash';
 import http from '@/api/http';
 import InputSpinner from '@/components/elements/InputSpinner';
 import Input from '@/components/elements/Input';
+import useServerPlugins from './useServerPlugins';
+import Switch from '@/components/elements/Switch';
 
 export default () => {
     const observer = useRef<IntersectionObserver | null>(null);
@@ -16,15 +17,15 @@ export default () => {
     const [sort, setSort] = useState('-downloads');
     const [plugins, setPlugins] = useState<any[]>([]);
     const [searchText, setSearchText] = useState('');
-    const username = useStoreState((state) => state.user.data!.username);
-    const id = ServerContext.useStoreState((state) => state.server.data!.id);
     const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
-    const node = ServerContext.useStoreState((state) => state.server.data!.node);
 
     const debouncedSearch = useCallback(
-        _.debounce((text) => setSearchText(text), 500),
+        _.debounce((text: string) => {
+            setSearchText(text);
+            setPage(1);
+        }, 500),
         []
-    ); //test
+    );
 
     const lastPluginRef = useCallback(
         (node) => {

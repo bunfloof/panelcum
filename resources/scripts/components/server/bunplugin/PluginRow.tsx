@@ -2,6 +2,8 @@ import React, { useEffect, useState, FunctionComponent, Ref } from 'react';
 import http from '@/api/http';
 import useServerPlugins from './useServerPlugins';
 import Spinner from '@/components/elements/Spinner';
+import DeletePluginsModal from './DeletePluginsModal';
+import deleteFiles from '@/api/server/files/deleteFiles';
 
 type PluginProps = {
     plugin: any;
@@ -9,7 +11,6 @@ type PluginProps = {
     serveruuid: string;
 };
 
-// Define the state of the plugin.
 enum PluginState {
     NotInstalled,
     Outdated,
@@ -17,17 +18,33 @@ enum PluginState {
 }
 
 const PluginRow: FunctionComponent<PluginProps> = ({ plugin, innerRef, serveruuid }) => {
-    const { files, plugins } = useServerPlugins(serveruuid);
+    const { files, plugins, refetch } = useServerPlugins(serveruuid);
     const [isInstalling, setIsInstalling] = useState(false);
+    const [pluginState, setPluginState] = useState(PluginState.NotInstalled); // make pluginState a state variable
 
-    // Determine the state of the plugin.
-    const installedPluginVersion = plugins[plugin.id]?.version;
-    let pluginState = PluginState.NotInstalled;
+    useEffect(() => {
+        const installedPluginVersion = plugins[plugin.id]?.version;
 
-    if (installedPluginVersion) {
-        pluginState =
-            installedPluginVersion === plugin.version.id.toString() ? PluginState.UpToDate : PluginState.Outdated;
-    }
+        if (installedPluginVersion) {
+            setPluginState(
+                installedPluginVersion === plugin.version.id.toString() ? PluginState.UpToDate : PluginState.Outdated
+            );
+        } else {
+            setPluginState(PluginState.NotInstalled);
+        }
+        console.log(`Plugin state for ${plugin.name} (${plugin.id}): `, pluginState);
+        console.log(`Installed plugin data: `, plugins[plugin.id]);
+    }, [plugins]); // run this effect whenever `plugins` changes
+
+    const deleteOldVersions = async (serverUuid: string, filesToDelete: string[]) => {
+        return deleteFiles(serverUuid, '/plugins', filesToDelete)
+            .then(() => {
+                console.log('Old versions deleted successfully');
+            })
+            .catch((error) => {
+                console.error('Error deleting old versions:', error);
+            });
+    };
 
     const handleInstall = async () => {
         setIsInstalling(true);
@@ -43,12 +60,23 @@ const PluginRow: FunctionComponent<PluginProps> = ({ plugin, innerRef, serveruui
             console.log(directUrl);
 
             const cleanName = plugin.name
-                .replace(/[ .]/g, '-')
-                .replace(/[^a-zA-Z0-9-]/g, '')
-                .replace(/--+/g, '-')
-                .substring(0, 32);
+                .replace(/[^a-zA-Z0-9 .()]/g, '')
+                .trim()
+                .replace(/[ .()]+/g, '-')
+                .replace(/-+/g, '-')
+                .substring(0, 32)
+                .replace(/-+$/, '');
 
             const filename = `${cleanName}-${plugin.id}-v${plugin.version.id}${plugin.file.type}`;
+
+            if (plugins[plugin.id]) {
+                const oldFilesToDelete = files.filter((file) => file.name.includes(`-${plugin.id}-v`));
+                await deleteOldVersions(
+                    serveruuid,
+                    oldFilesToDelete.map((file) => file.name)
+                );
+                console.log('Deleted old version(s) of plugin');
+            }
 
             await http.post(`/api/client/servers/${serveruuid}/files/pull`, {
                 url: directUrl,
@@ -59,12 +87,25 @@ const PluginRow: FunctionComponent<PluginProps> = ({ plugin, innerRef, serveruui
             });
 
             console.log('File pull successful');
+            setPluginState(PluginState.UpToDate); // Update the state to cause a re-render
+
+            refetch();
         } catch (error) {
             console.error('Error during install', error);
         } finally {
             setIsInstalling(false);
         }
     };
+
+    useEffect(() => {
+        console.log(
+            `Plugin name is ${plugin.name} with plugin ID ${plugin.id} and plugin version ${plugin.version.id} and `
+        );
+        console.log('now loggin pljugins');
+        console.log(plugins);
+        console.log('now loggin files');
+        console.log(files);
+    }, [files, plugins]);
 
     return (
         <div className='w-full flex flex-col items-start justify-start' ref={innerRef}>
@@ -98,20 +139,37 @@ const PluginRow: FunctionComponent<PluginProps> = ({ plugin, innerRef, serveruui
                     <button>
                         <div>Info</div>
                     </button>
-                    {pluginState === PluginState.NotInstalled && (
+                    {plugin.file.type === '.jar' && pluginState === PluginState.NotInstalled && (
                         <button onClick={handleInstall} disabled={isInstalling}>
                             {isInstalling ? <Spinner /> : <div>Install</div>}
                         </button>
                     )}
-                    {pluginState === PluginState.Outdated && (
-                        <button onClick={handleInstall} disabled={isInstalling}>
-                            {isInstalling ? <Spinner /> : <div>Update</div>}
-                        </button>
+                    {pluginState === PluginState.Outdated && plugins[plugin.id] && (
+                        <>
+                            <button onClick={handleInstall} disabled={isInstalling}>
+                                {isInstalling ? <Spinner /> : <div>Update</div>}
+                            </button>
+                            <DeletePluginsModal
+                                serverUuid={serveruuid}
+                                pluginFile={plugins[plugin.id].name}
+                                relatedDirs={plugins[plugin.id]?.relatedDirs}
+                                onDeleteSuccess={() => {
+                                    setPluginState(PluginState.NotInstalled);
+                                    refetch();
+                                }}
+                            />
+                        </>
                     )}
-                    {pluginState === PluginState.UpToDate && (
-                        <button disabled>
-                            <div>Installed</div>
-                        </button>
+                    {pluginState === PluginState.UpToDate && plugins[plugin.id] && (
+                        <DeletePluginsModal
+                            serverUuid={serveruuid}
+                            pluginFile={plugins[plugin.id].name}
+                            relatedDirs={plugins[plugin.id]?.relatedDirs}
+                            onDeleteSuccess={() => {
+                                setPluginState(PluginState.NotInstalled);
+                                refetch();
+                            }}
+                        />
                     )}
                 </div>
             </div>
