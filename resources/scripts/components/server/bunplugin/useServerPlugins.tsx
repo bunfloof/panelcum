@@ -4,10 +4,20 @@ import loadDirectory from '@/api/server/files/loadDirectory';
 
 // function extracts plugin ID and version from filename
 const parseFilename = (filename: string): { id: string; version: string; name: string } | null => {
-    console.log(`Parsing filename: ${filename}`);
     const match = filename.match(/^(.*?)-(\d+)-v(\d+)\.jar$/);
-    console.log(`Parsed filename: `, match);
-    return match ? { name: match[1], id: match[2], version: match[3] } : null;
+    if (match) {
+        return { name: match[1], id: match[2], version: match[3] };
+    } else {
+        const match = filename.match(/^(.*?)(?:-v(\d+))?.jar$/);
+        if (match) {
+            return {
+                name: match[1],
+                id: filename,
+                version: `000000`,
+            };
+        }
+    }
+    return null;
 };
 
 // Dice's coefficient for similarity calculation
@@ -72,7 +82,7 @@ const useServerPlugins = (serveruuid: string) => {
                             .filter(({ dice }) => dice > 0.2)
                             .map(({ name }) => name);
 
-                        console.log(`Related dirs for ${pluginData.name}: ${relatedDirs}`);
+                        //console.log(`Related dirs for ${pluginData.name}: ${relatedDirs}`);
 
                         plugins[pluginData.id] = { name: file.name, version: pluginData.version, relatedDirs };
                     }

@@ -55,6 +55,7 @@ Route::prefix('/splitter')->middleware(AccountSubject::class)->group(function ()
 Route::prefix('/plugins')->middleware(AccountSubject::class)->group(function () {
     Route::get('/getsearchplugins', [Client\Servers\PluginsController::class, 'getSearchPlugins'])->name('getSearchPlugins');
     Route::get('/getdirectdownloadlink', [Client\Servers\PluginsController::class, 'getDirectDownloadLink'])->name('getDirectDownloadLink');
+    Route::get('/getresourcedetails', [Client\Servers\PluginsController::class, 'getResourceDetails'])->name('getResourceDetails');
 });
 /*
 |--------------------------------------------------------------------------

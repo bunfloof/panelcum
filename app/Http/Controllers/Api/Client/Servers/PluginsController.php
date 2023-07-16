@@ -88,5 +88,36 @@ class PluginsController extends ClientApiController
             return response()->json(['error' => 'An error occurred while processing your request.'], 500);
         }
     }
-    
+
+    /**
+     * Returns detailed information about a specific resource
+     *
+     * @throws NotFoundHttpException
+     */
+    public function getResourceDetails(Request $request)
+    {
+        try {
+            // Instantiate the SpigetAPI.
+            $spiget = SpigetAPI::getInstance();
+
+            // Get resource from the request.
+            $resource = $request->input('resource');
+
+            // Check if the resource parameter is provided.
+            if (empty($resource)) {
+                return response()->json(['error' => 'No resource specified.'], 400);
+            }
+
+            $results = $spiget->getResource($resource);
+
+            return response()->json(['results' => $results]);
+
+        } catch (\Exception $e) {
+            Log::error('getResourceDetails failed with exception: ', [
+                'exception' => $e->getMessage(),
+            ]);
+
+            return response()->json(['error' => 'An error occurred while processing your request.'], 500);
+        }
+    } 
 }

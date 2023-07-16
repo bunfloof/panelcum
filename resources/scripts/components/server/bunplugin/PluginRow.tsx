@@ -21,6 +21,7 @@ const PluginRow: FunctionComponent<PluginProps> = ({ plugin, innerRef, serveruui
     const { files, plugins, refetch } = useServerPlugins(serveruuid);
     const [isInstalling, setIsInstalling] = useState(false);
     const [pluginState, setPluginState] = useState(PluginState.NotInstalled); // make pluginState a state variable
+    const [showAllPlugins, setShowAllPlugins] = useState(false);
 
     useEffect(() => {
         const installedPluginVersion = plugins[plugin.id]?.version;
@@ -32,14 +33,14 @@ const PluginRow: FunctionComponent<PluginProps> = ({ plugin, innerRef, serveruui
         } else {
             setPluginState(PluginState.NotInstalled);
         }
-        console.log(`Plugin state for ${plugin.name} (${plugin.id}): `, pluginState);
-        console.log(`Installed plugin data: `, plugins[plugin.id]);
+        //console.log(`Plugin state for ${plugin.name} (${plugin.id}): `, pluginState);
+        //console.log(`Installed plugin data: `, plugins[plugin.id]);
     }, [plugins]); // run this effect whenever `plugins` changes
 
     const deleteOldVersions = async (serverUuid: string, filesToDelete: string[]) => {
         return deleteFiles(serverUuid, '/plugins', filesToDelete)
             .then(() => {
-                console.log('Old versions deleted successfully');
+                //console.log('Old versions deleted successfully');
             })
             .catch((error) => {
                 console.error('Error deleting old versions:', error);
@@ -57,7 +58,7 @@ const PluginRow: FunctionComponent<PluginProps> = ({ plugin, innerRef, serveruui
             });
 
             const directUrl = res.data.url;
-            console.log(directUrl);
+            //console.log(directUrl);
 
             const cleanName = plugin.name
                 .replace(/[^a-zA-Z0-9 .()]/g, '')
@@ -75,7 +76,7 @@ const PluginRow: FunctionComponent<PluginProps> = ({ plugin, innerRef, serveruui
                     serveruuid,
                     oldFilesToDelete.map((file) => file.name)
                 );
-                console.log('Deleted old version(s) of plugin');
+                //console.log('Deleted old version(s) of plugin');
             }
 
             await http.post(`/api/client/servers/${serveruuid}/files/pull`, {
@@ -86,7 +87,7 @@ const PluginRow: FunctionComponent<PluginProps> = ({ plugin, innerRef, serveruui
                 foreground: true,
             });
 
-            console.log('File pull successful');
+            //console.log('File pull successful');
             setPluginState(PluginState.UpToDate); // Update the state to cause a re-render
 
             refetch();
@@ -96,16 +97,6 @@ const PluginRow: FunctionComponent<PluginProps> = ({ plugin, innerRef, serveruui
             setIsInstalling(false);
         }
     };
-
-    useEffect(() => {
-        console.log(
-            `Plugin name is ${plugin.name} with plugin ID ${plugin.id} and plugin version ${plugin.version.id} and `
-        );
-        console.log('now loggin pljugins');
-        console.log(plugins);
-        console.log('now loggin files');
-        console.log(files);
-    }, [files, plugins]);
 
     return (
         <div className='w-full flex flex-col items-start justify-start' ref={innerRef}>
