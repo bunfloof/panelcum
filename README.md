@@ -5,15 +5,10 @@
 ![GitHub Releases](https://img.shields.io/github/downloads/pterodactyl/panel/latest/total?style=for-the-badge)
 ![GitHub contributors](https://img.shields.io/github/contributors/pterodactyl/panel?style=for-the-badge)
 
-# Pterodactyl Panel with Modifications
+# Pterodactyl Panel with Bun's Coems
+All modifications and improvements made to this project are available for free and released under an open-source license. As a contributor, my only request is that you acknowledge my contributions and provide attribution when using this code. The typical protocol in the open-source community encourages and appreciates such acknowledgment. This can be done by linking back to this GitHub repository ([bunfloof/panelcum](https://github.com/bunfloof/panelcum)) in your project documentation or crediting my GitHub username in your project's credits section.
 
-⚠️ **Trade Offer** ⚠️
-
-I receive: free Minecraft server. You receive: improvements to panel.
-
-As a Minecraft server freeloader (I get free servers🤑 to download **4K furry porn**), I make improvements to Pterodactyl Panel based on **public** customer feedback from both FurryHost and Foxomy, so ask away in their Discord servers/Review sites/any public platform. 
-
-**Please contact me directly or open issues here if you experience any bugs.** **Do not contact these companies for billing related issues as I do not have administrative access to their billing panel.**
+Thank you for your understanding and cooperation.
 
 # Modifications
 
