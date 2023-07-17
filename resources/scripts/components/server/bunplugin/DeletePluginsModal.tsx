@@ -60,8 +60,8 @@ const DeletePluginsModal = asDialog({ title: 'Delete Plugin' })(
                             <>
                                 <p>
                                     Are you sure you want to delete <strong>{pluginFile}</strong>? This plugin may also
-                                    contain leftover plugin data that you may want to delete too, so select the correct
-                                    directories below to delete (Optional):
+                                    contain associated plugin data. Please select the correct directories to delete
+                                    (Optional):
                                 </p>
                                 {relatedDirs.map((dir) => (
                                     <div css={tw`mt-4 -mb-2 bg-gray-700 p-3 rounded`} key={dir}>

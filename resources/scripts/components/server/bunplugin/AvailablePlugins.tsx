@@ -5,6 +5,7 @@ import _ from 'lodash';
 import http from '@/api/http';
 import InputSpinner from '@/components/elements/InputSpinner';
 import Input from '@/components/elements/Input';
+import Spinner from '@/components/elements/Spinner';
 
 const AvailablePlugins = () => {
     const observer = useRef<IntersectionObserver | null>(null);
@@ -48,7 +49,7 @@ const AvailablePlugins = () => {
         http.get(`/api/client/plugins/getsearchplugins`, {
             params: {
                 resource: searchText,
-                size: 10,
+                size: 20,
                 page: page,
                 sort: sort,
                 fields: 'file,icon.data,name,tag,releaseDate,updateDate,downloads,rating,id,version',
@@ -69,48 +70,71 @@ const AvailablePlugins = () => {
             <InputSpinner visible={loading}>
                 <Input type='text' placeholder='Search plugins...' onChange={(e) => debouncedSearch(e.target.value)} />
             </InputSpinner>
-            <div>
-                <button
+            <div className='flex space-x-4'>
+                <span>Sort by:</span>
+                <span
+                    className={`${sort === '-downloads' ? 'text-gray-300 font-medium' : 'underline cursor-pointer'}`}
                     onClick={() => {
                         setSort('-downloads');
                         setPage(1);
                     }}
                 >
                     Downloads
-                </button>
-                <button
+                </span>
+                <span
+                    className={`${
+                        sort === '-rating.average' ? 'text-gray-300 font-medium' : 'underline cursor-pointer'
+                    }`}
                     onClick={() => {
                         setSort('-rating.average');
                         setPage(1);
                     }}
                 >
                     Rating
-                </button>
-                <button
+                </span>
+                <span
+                    className={`${sort === '-releaseDate' ? 'text-gray-300 font-medium' : 'underline cursor-pointer'}`}
                     onClick={() => {
                         setSort('-releaseDate');
                         setPage(1);
                     }}
                 >
                     Release Date
-                </button>
-                <button
+                </span>
+                <span
+                    className={`${sort === '-updateDate' ? 'text-gray-300 font-medium' : 'underline cursor-pointer'}`}
                     onClick={() => {
                         setSort('-updateDate');
                         setPage(1);
                     }}
                 >
                     Update Date
-                </button>
+                </span>
             </div>
-            {plugins.map((plugin, index) => {
-                if (plugins.length === index + 1) {
-                    return <PluginRow innerRef={lastPluginRef} key={plugin.id} plugin={plugin} serveruuid={uuid} />;
-                } else {
-                    return <PluginRow key={plugin.id} plugin={plugin} serveruuid={uuid} />;
-                }
-            })}
-            <div>{loading && 'Loading...'}</div>
+            <ul className='bg-gray-700 rounded overflow-hidden'>
+                {plugins.map((plugin, index) => {
+                    if (plugins.length === index + 1) {
+                        return (
+                            <li
+                                key={plugin.id}
+                                className='border-b-2 border-gray-800 last:rounded-b last:border-0 group p-2'
+                            >
+                                <PluginRow innerRef={lastPluginRef} plugin={plugin} serveruuid={uuid} />
+                            </li>
+                        );
+                    } else {
+                        return (
+                            <li
+                                key={plugin.id}
+                                className='border-b-2 border-gray-800 last:rounded-b last:border-0 group p-2'
+                            >
+                                <PluginRow plugin={plugin} serveruuid={uuid} />
+                            </li>
+                        );
+                    }
+                })}
+            </ul>
+            <div className='flex justify-center items-center | m-20 | m-6'>{loading && <Spinner />}</div>
         </>
     );
 };

@@ -1,9 +1,11 @@
 import React, { useEffect, useState, FunctionComponent, Ref } from 'react';
 import http from '@/api/http';
 import useServerPlugins from './useServerPlugins';
+import { Button } from '@/components/elements/button/index';
 import Spinner from '@/components/elements/Spinner';
 import DeletePluginsModal from './DeletePluginsModal';
 import deleteFiles from '@/api/server/files/deleteFiles';
+import ReactStars from 'react-rating-stars-component';
 
 type PluginProps = {
     plugin: any;
@@ -17,11 +19,13 @@ enum PluginState {
     UpToDate,
 }
 
+const resourceIcon =
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAMAAADVRocKAAABI1BMVEX///8qLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzUqLzWErmOLAAAAYHRSTlMAAAEDBAYHCAkLDA0TFBUWGBkaGx4fISQ8Tk9TWVtcXl9iY2ZnaWtsbm9wcXJzdnd5e3x9f4CEho2Zmquturu9v8DBw8XNzs/Q0tPV1tfa29zd3+Dh5OXm5/H0+Pv8/f6vIEXSAAACJElEQVR42u2YZ1PCQBCGEwUVGxBRDKKI2MCGKCqi2EBjRQUbFvb//woHIsMmoXiXg3Gcfb6R27xPJhzD7UoSQRAEQRBEBRmjLN49LCqGSyIFyvwjAMDjvNIRwejKFfxwtTIqXNC/dQmIy8SAUIFr7RpM3Ky5hAlGFizxFa4XRoQIPOE8Ss0bPoQ9tgXDEfzu77c9nu17/F1Ehm3FO5ZzKO0pOVF56xPJJ3QxF3Vwx/fGcPxz3F/bmv74M1bEernihyIaSnlNGH7ASuIVLWqRIeZ49yzeOYVdr2zCu1vAO2rWzRTvnMZPn98ZkxswtoN3lDbtZBCk0J3FpE9ugi9ZRIUpBsFnfeds+uUW+DfrO+qTQVDSb/l4iY/LbRiPv3zo1SUGwZt+y16P6f+gAZLUs6dXv7EL0pO/EUymuQUAB4F2AvWgVsslADgMtooPHtYrOQUAx1PN4qeOcR23AN6P1EFruks9egcxAgA4DZgUg4ETc40tAUBGddTjHWrGWmFTAJAJ1fJDmUbrtgUAZ3OV+PBZ41UBAihng8FsGTonAPj6arokRtACEpCABH9MUOIRlLgOXgywHLxSPIJ9BkHfjMYar82wHH7Nx/e2sB7frQ1I66fnaED0Fur8N/EXnC1UtRFZzbWLz606JTsY21gLdttYayNuQEQj3oVRQvUcun5rjr/dcAkd5wwkOjrO6cJAqgsjtapiqVCICh4KEgRBEATxP/gG8FmhNvgddLwAAAAASUVORK5CYII=';
+
 const PluginRow: FunctionComponent<PluginProps> = ({ plugin, innerRef, serveruuid }) => {
     const { files, plugins, refetch } = useServerPlugins(serveruuid);
     const [isInstalling, setIsInstalling] = useState(false);
     const [pluginState, setPluginState] = useState(PluginState.NotInstalled); // make pluginState a state variable
-    const [showAllPlugins, setShowAllPlugins] = useState(false);
 
     useEffect(() => {
         const installedPluginVersion = plugins[plugin.id]?.version;
@@ -102,14 +106,18 @@ const PluginRow: FunctionComponent<PluginProps> = ({ plugin, innerRef, serveruui
         <div className='w-full flex flex-col items-start justify-start' ref={innerRef}>
             <div className='flex flex-row flex-wrap items-start justify-between'>
                 <div className='flex flex-row flex-wrap items-start justify-start'>
-                    <div className='flex flex-col items-center justify-start'>
+                    <div className='flex flex-col items-center justify-start rounded overflow-hidden'>
                         <img
                             alt=''
-                            src={plugin.icon.data === '' ? `none` : `data:image/jpeg;base64, ${plugin.icon.data}`}
+                            src={
+                                plugin.icon.data === ''
+                                    ? `${resourceIcon}`
+                                    : `data:image/jpeg;base64, ${plugin.icon.data}`
+                            }
                             style={{ width: '64px', height: '64px' }}
                         />
                     </div>
-                    <div className='flex flex-col items-start justify-start'>
+                    <div className='flex flex-col items-start justify-start ml-2'>
                         <b>{plugin.name}</b>
                         <div className='flex flex-col items-start justify-start'>
                             <div>{plugin.tag}</div>
@@ -119,21 +127,32 @@ const PluginRow: FunctionComponent<PluginProps> = ({ plugin, innerRef, serveruui
             </div>
             <div className='self-stretch flex flex-row flex-wrap items-center justify-end'>
                 <div className='flex-1 relative'>
-                    <span>{`Downloads: `}</span>
-                    <span>{`${plugin.downloads}, Last Updated: ${new Date(
-                        plugin.updateDate * 1000
-                    ).toLocaleString()}, Created: ${new Date(plugin.releaseDate * 1000).toLocaleString()}, Rating: ${
-                        plugin.rating?.average?.toFixed(1) || 'N/A'
-                    }/5 from ${plugin.rating?.count || 'N/A'} reviews`}</span>
+                    <div className='flex items-center'>
+                        {`Downloads: `}
+                        {`${plugin.downloads}, Last Updated: ${new Date(
+                            plugin.updateDate * 1000
+                        ).toLocaleString()}, Created: ${new Date(
+                            plugin.releaseDate * 1000
+                        ).toLocaleString()}, Rating: `}
+                        <ReactStars size={22} isHalf={true} value={plugin.rating?.average} edit={false} />
+                        {`${plugin.rating?.average?.toFixed(1) || 'N/A'} from ${plugin.rating?.count || 'N/A'} reviews`}
+                    </div>
                 </div>
                 <div className='flex flex-row flex-wrap items-center justify-end'>
-                    <button>
-                        <div>Info</div>
-                    </button>
+                    <Button.Text
+                        onClick={() =>
+                            window.open(
+                                `https://www.spigotmc.org/${plugin.file.url.split('/').slice(0, -1).join('/')}/`,
+                                '_blank'
+                            )
+                        }
+                    >
+                        {plugin.file.type === '.jar' ? <div>Info</div> : <div>Download</div>}
+                    </Button.Text>
                     {plugin.file.type === '.jar' && pluginState === PluginState.NotInstalled && (
-                        <button onClick={handleInstall} disabled={isInstalling}>
+                        <Button.Text onClick={handleInstall} className='ml-2' disabled={isInstalling}>
                             {isInstalling ? <Spinner /> : <div>Install</div>}
-                        </button>
+                        </Button.Text>
                     )}
                     {pluginState === PluginState.Outdated && plugins[plugin.id] && (
                         <>
@@ -141,6 +160,7 @@ const PluginRow: FunctionComponent<PluginProps> = ({ plugin, innerRef, serveruui
                                 {isInstalling ? <Spinner /> : <div>Update</div>}
                             </button>
                             <DeletePluginsModal
+                                className='ml-2'
                                 serverUuid={serveruuid}
                                 pluginFile={plugins[plugin.id].name}
                                 relatedDirs={plugins[plugin.id]?.relatedDirs}
@@ -154,6 +174,7 @@ const PluginRow: FunctionComponent<PluginProps> = ({ plugin, innerRef, serveruui
                     {pluginState === PluginState.UpToDate && plugins[plugin.id] && (
                         <DeletePluginsModal
                             serverUuid={serveruuid}
+                            className='ml-2'
                             pluginFile={plugins[plugin.id].name}
                             relatedDirs={plugins[plugin.id]?.relatedDirs}
                             onDeleteSuccess={() => {

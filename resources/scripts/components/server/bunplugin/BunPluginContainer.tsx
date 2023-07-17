@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import ServerContentBlock from '@/components/elements/ServerContentBlock';
 import Switch from '@/components/elements/Switch';
 import AvailablePlugins from './AvailablePlugins';
 import InstalledPlugins from './InstalledPlugins';
-import http from '@/api/http';
 import tw from 'twin.macro';
 
 const BunPluginContainer = () => {

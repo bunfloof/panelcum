@@ -33,7 +33,7 @@ class PluginsController extends ClientApiController
             if (is_string($fields)) {
                 $fields = explode(',', $fields);
             }
-
+    
             $args = [
                 "size" => $size,
                 "page" => $page,
@@ -42,52 +42,60 @@ class PluginsController extends ClientApiController
             ];
         
             if (empty($resource)) {
-                $resource = 'essentials';  // replace with an appropriate default value.
-            }
-
-            if (!empty($resource)) {
+                $results = $spiget->getFreeResourceList($size, $page, $sort, $fields);
+            } else {
                 $args["resource"] = $resource;
+                $results = $spiget->getSearchResource($resource, $size, $page, $sort, $fields);
             }
-
-            $results = $spiget->getSearchResource($resource, $size, $page, $sort, $fields);
-        
-            return response()->json(['results' => $results]);
     
+            return response()->json(['results' => $results]);
+        
         } catch (\Exception $e) {
             Log::error('getSearchPlugins failed with exception: ', [
                 'exception' => $e->getMessage(),
             ]);
-    
+        
             return response()->json(['error' => 'An error occurred while processing your request.'], 500);
         }
     }
+    
 
     public function getDirectDownloadLink(Request $request)
     {
         try {
             $url = $request->input('url'); // Get the URL from the request
-
+    
+            // Get the host from the URL
+            $host = parse_url($url, PHP_URL_HOST);
+    
+            // Check if the host is one of the allowed hosts
+            $allowedHosts = ['www.spigotmc.org', 'spigotmc.org', 'spiget.org', 'cdn.spiget.org', 'api.spiget.org'];
+            if (!in_array($host, $allowedHosts)) {
+                return response()->json(['error' => 'Invalid URL provided.'], 400);
+            }
+    
             // Create a new Guzzle client
             $client = new Client([
                 'allow_redirects' => [
                     'track_redirects' => true
                 ]
             ]);
-
+    
             $response = $client->get($url); // Perform a GET request to the URL
-
+    
             // Get the URI of the last redirect
             $directUrl = $response->getHeaderLine('X-Guzzle-Redirect-History');
-
+    
             return response()->json(['url' => $directUrl]);
         } catch (\Exception $e) {
             Log::error('getDirectDownloadLink failed with exception: ', [
                 'exception' => $e->getMessage(),
             ]);
-
+    
             return response()->json(['error' => 'An error occurred while processing your request.'], 500);
         }
     }
+    
 
     /**
      * Returns detailed information about a specific resource
