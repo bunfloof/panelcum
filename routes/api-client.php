@@ -57,6 +57,15 @@ Route::prefix('/plugins')->middleware(AccountSubject::class)->group(function () 
     Route::get('/getdirectdownloadlink', [Client\Servers\PluginsController::class, 'getDirectDownloadLink'])->name('getDirectDownloadLink');
     Route::get('/getresourcedetails', [Client\Servers\PluginsController::class, 'getResourceDetails'])->name('getResourceDetails');
 });
+
+Route::prefix('/modpacks')->middleware(AccountSubject::class)->group(function () {
+    Route::get('/getmodssearch', [Client\Servers\ModpacksController::class, 'getModsSearch'])->name('getModsSearch');
+    Route::get('/getmodfiles', [Client\Servers\ModpacksController::class, 'getModFiles'])->name('getModFiles');
+    Route::post('/editserver/{uuid}/{projectId}/{versionId}', [Client\ClientModpackController::class, 'editServer'])->name('editServer');
+    // other routes
+});
+
+
 /*
 |--------------------------------------------------------------------------
 | Client Control API
