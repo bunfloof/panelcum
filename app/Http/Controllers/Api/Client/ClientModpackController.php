@@ -104,7 +104,6 @@ class ClientModpackController extends ClientApiController
         $this->startupModificationService->setUserLevel(User::USER_LEVEL_ADMIN);
         $this->startupModificationService->handle($server, $startup);
         $this->reinstallServerService->handle($server);
-        Activity::event('server:reinstall')->log();
 
         return [
             'Success' => 'Ok',

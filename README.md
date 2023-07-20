@@ -12,6 +12,20 @@ Thank you for your understanding and cooperation.
 
 # Modifications
 
+## 🤤🤤🤤 Modpack installer
+
+Remember to supply the API key and curseforge egg id in your .env
+
+```
+# BUN STUFF CURSEFORGE
+CURSEFORGE_API_KEY=
+CURSEFORGE_GENERIC_EGG_ID=
+```
+
+## 🤤🤤🤤 Plugins installer
+
+- idk no extra steps required unless API dies
+
 ## 🤤🤤🤤 Container splitter
 
 Features:

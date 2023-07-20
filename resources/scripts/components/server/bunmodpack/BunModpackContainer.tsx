@@ -12,7 +12,7 @@ const BunModpackContainer: React.FC = () => {
     const [page, setPage] = useState(0); // start from 0
     const [loading, setLoading] = useState(true);
     const [hasMore, setHasMore] = useState(true);
-    const [sort, setSort] = useState(6);
+    const [sort, setSort] = useState(2);
     const [mods, setMods] = useState<any[]>([]);
     const [searchText, setSearchText] = useState('');
 
@@ -101,13 +101,29 @@ const BunModpackContainer: React.FC = () => {
                     Last Updated
                 </span>
             </div>
-            {mods.map((modpack, index) => {
-                if (mods.length === index + 1) {
-                    return <ModpackRow ref={lastModRef} key={`${modpack.id}-${index}`} modpack={modpack} />;
-                } else {
-                    return <ModpackRow key={`${modpack.id}-${index}`} modpack={modpack} />;
-                }
-            })}
+            <ul className='bg-gray-700 rounded overflow-hidden'>
+                {mods.map((modpack, index) => {
+                    if (mods.length === index + 1) {
+                        return (
+                            <li
+                                key={modpack.id}
+                                className='border-b-2 border-gray-800 last:rounded-b last:border-0 group p-2'
+                            >
+                                <ModpackRow ref={lastModRef} key={`${modpack.id}-${index}`} modpack={modpack} />
+                            </li>
+                        );
+                    } else {
+                        return (
+                            <li
+                                key={modpack.id}
+                                className='border-b-2 border-gray-800 last:rounded-b last:border-0 group p-2'
+                            >
+                                <ModpackRow key={`${modpack.id}-${index}`} modpack={modpack} />
+                            </li>
+                        );
+                    }
+                })}
+            </ul>
 
             <div className='flex justify-center items-center | m-20 | m-6'>{loading && <Spinner />}</div>
         </ServerContentBlock>

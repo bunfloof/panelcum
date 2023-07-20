@@ -1,5 +1,6 @@
 import React, { forwardRef, useState } from 'react';
 import ModpackExpanded from './ModpackExpanded';
+import { Button } from '@/components/elements/button/index';
 
 interface Author {
     name: string;
@@ -40,33 +41,37 @@ const ModpackRow = forwardRef<HTMLDivElement, ModpackRowProps>(({ modpack }, ref
         <div className='w-full flex flex-col items-start justify-start' ref={ref}>
             <div className='flex flex-row flex-wrap items-start justify-between'>
                 <div className='flex flex-row flex-wrap items-start justify-start'>
-                    <div className='flex flex-col items-center justify-start'>
+                    <div className='flex flex-col items-center justify-start rounded overflow-hidden'>
                         <img alt={modpack.name} src={modpack.logo.url} style={{ width: '64px', height: '64px' }} />
                     </div>
-                    <div className='flex flex-col items-start justify-start'>
+                    <div className='flex flex-col items-start justify-start ml-2'>
                         <b>
                             {modpack.name} ({modpack.id}) by {authors}
                         </b>
                         <div className='flex flex-col items-start justify-start'>
-                            <div>{modpack.summary}</div>
+                            <div>
+                                {modpack.summary.length > 128
+                                    ? `${modpack.summary.substring(0, 128)}...`
+                                    : modpack.summary}
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div className='flex flex-row flex-wrap items-center justify-end'>
-                <div>
-                    <span>
+            <div className='self-stretch flex flex-row flex-wrap items-center justify-end'>
+                <div className='flex-1 relative'>
+                    <div className='flex items-center'>
                         Downloads: {modpack.downloadCount}, Last Updated: {modifiedDate}, Created: {createdDate}
-                    </span>
+                    </div>
                 </div>
                 <div className='flex flex-row flex-wrap items-center justify-end'>
-                    <button onClick={() => window.open(modpack.links.websiteUrl, '_blank')}>
+                    <Button.Text onClick={() => window.open(modpack.links.websiteUrl, '_blank')}>
                         <div>Info</div>
-                    </button>
-                    {/* Add more actions as needed */}
-                    <button onClick={() => setIsExpanded(!isExpanded)}>
-                        <div>More</div>
-                    </button>
+                    </Button.Text>
+
+                    <Button.Text className='ml-2' onClick={() => setIsExpanded(!isExpanded)}>
+                        <div>Install</div>
+                    </Button.Text>
                 </div>
             </div>
             {isExpanded && <ModpackExpanded modId={modpack.id} />}
