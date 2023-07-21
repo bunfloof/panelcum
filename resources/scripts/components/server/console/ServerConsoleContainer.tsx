@@ -10,6 +10,7 @@ import StatGraphs from '@/components/server/console/StatGraphs';
 import PowerButtons from '@/components/server/console/PowerButtons';
 import ServerDetailsBlock from '@/components/server/console/ServerDetailsBlock';
 import { Alert } from '@/components/elements/alert';
+import PlayersBlock from '@/components/server/console/PlayersBlock';
 
 export type PowerAction = 'start' | 'stop' | 'restart' | 'kill';
 
@@ -19,6 +20,7 @@ const ServerConsoleContainer = () => {
     const isInstalling = ServerContext.useStoreState((state) => state.server.isInstalling);
     const isTransferring = ServerContext.useStoreState((state) => state.server.data!.isTransferring);
     const eggFeatures = ServerContext.useStoreState((state) => state.server.data!.eggFeatures, isEqual);
+    const nestId = ServerContext.useStoreState((state) => state.server.data!.nestId);
     const isNodeUnderMaintenance = ServerContext.useStoreState((state) => state.server.data!.isNodeUnderMaintenance);
 
     return (
@@ -57,6 +59,7 @@ const ServerConsoleContainer = () => {
                 </Spinner.Suspense>
             </div>
             <Features enabled={eggFeatures} />
+            {nestId === 1 && <PlayersBlock />}
         </ServerContentBlock>
     );
 };

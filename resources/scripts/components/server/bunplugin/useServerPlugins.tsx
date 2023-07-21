@@ -60,6 +60,16 @@ const useServerPlugins = (serveruuid: string) => {
     useEffect(() => {
         const load = async () => {
             try {
+                // Check if the /plugins directory exists in the root
+                const rootDirectories: FileObject[] = await loadDirectory(serveruuid, '/');
+                const pluginsDirectoryExists = rootDirectories.some(
+                    (dir) => dir.name === 'plugins' && dir.mimetype === 'inode/directory'
+                );
+
+                // If /plugins doesn't exist, return without loading
+                if (!pluginsDirectoryExists) return;
+
+                // If /plugins exists, proceed with loading files from /plugins
                 const fetchedFiles: FileObject[] = await loadDirectory(serveruuid, '/plugins');
                 setFiles(fetchedFiles);
 

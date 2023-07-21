@@ -62,7 +62,6 @@ Route::prefix('/modpacks')->middleware(AccountSubject::class)->group(function ()
     Route::get('/getmodssearch', [Client\Servers\ModpacksController::class, 'getModsSearch'])->name('getModsSearch');
     Route::get('/getmodfiles', [Client\Servers\ModpacksController::class, 'getModFiles'])->name('getModFiles');
     Route::post('/editserver/{uuid}/{projectId}/{versionId}', [Client\ClientModpackController::class, 'editServer'])->name('editServer');
-    // other routes
 });
 
 
@@ -167,6 +166,10 @@ Route::group([
 
     Route::group(['prefix' => '/splitter'], function () {
         Route::get('/getinfo', [Client\Servers\ServerSplitterController::class, 'getInfo'])->name('getInfo');
+    });
+
+    Route::group(['prefix' => '/players'], function () {
+        Route::get('/getplayers', [Client\Servers\PlayersController::class, 'getplayers'])->name('getplayers');
     });
     
 });

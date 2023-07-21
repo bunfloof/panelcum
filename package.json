@@ -43,6 +43,7 @@
         "react-loading-skeleton": "^3.3.1",
         "react-rating-stars-component": "^2.2.0",
         "react-router-dom": "^5.1.2",
+        "react-transition-group": "^4.4.5",
         "reaptcha": "^1.7.2",
         "sockette": "^2.0.6",
         "styled-components": "^5.2.1",

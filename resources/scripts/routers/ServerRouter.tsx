@@ -35,6 +35,9 @@ export default () => {
     const getServer = ServerContext.useStoreActions((actions) => actions.server.getServer);
     const clearServerState = ServerContext.useStoreActions((actions) => actions.clearServerState);
 
+    const nestId = ServerContext.useStoreState((state) => state.server.data?.nestId);
+    const minecraftroutes = ['/modpacks', '/plugins', '/minecraft'];
+
     const to = (value: string, url = false) => {
         if (value === '/') {
             return url ? match.url : match.path;
@@ -78,8 +81,13 @@ export default () => {
                             <div>
                                 {routes.server
                                     .filter((route) => !!route.name)
-                                    .map((route) =>
-                                        route.permission ? (
+                                    .map((route) => {
+                                        // If the route is for '/modpacks' and nestId is not 1, don't create NavLink
+                                        if (minecraftroutes.includes(route.path) && nestId !== 1) {
+                                            return null;
+                                        }
+
+                                        return route.permission ? (
                                             <Can key={route.path} action={route.permission} matchAny>
                                                 <NavLink to={to(route.path, true)} exact={route.exact}>
                                                     {route.name}
@@ -89,8 +97,8 @@ export default () => {
                                             <NavLink key={route.path} to={to(route.path, true)} exact={route.exact}>
                                                 {route.name}
                                             </NavLink>
-                                        )
-                                    )}
+                                        );
+                                    })}
                                 {rootAdmin && (
                                     // eslint-disable-next-line react/jsx-no-target-blank
                                     <a href={`/admin/servers/view/${serverId}`} target={'_blank'}>
@@ -109,13 +117,20 @@ export default () => {
                         <ErrorBoundary>
                             <TransitionRouter>
                                 <Switch location={location}>
-                                    {routes.server.map(({ path, permission, component: Component }) => (
-                                        <PermissionRoute key={path} permission={permission} path={to(path)} exact>
-                                            <Spinner.Suspense>
-                                                <Component />
-                                            </Spinner.Suspense>
-                                        </PermissionRoute>
-                                    ))}
+                                    {routes.server.map(({ path, permission, component: Component }) => {
+                                        // If the route is for '/modpacks' and nestId is not 1, don't create PermissionRoute
+                                        if (minecraftroutes.includes(path) && nestId !== 1) {
+                                            return null;
+                                        }
+
+                                        return (
+                                            <PermissionRoute key={path} permission={permission} path={to(path)} exact>
+                                                <Spinner.Suspense>
+                                                    <Component />
+                                                </Spinner.Suspense>
+                                            </PermissionRoute>
+                                        );
+                                    })}
                                     <Route path={'*'} component={NotFound} />
                                 </Switch>
                             </TransitionRouter>
