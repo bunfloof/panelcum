@@ -17,6 +17,7 @@ import BunSplitterContainer from '@/components/server/bunsplitter/BunSplitterCon
 import BunMinecraftContainer from '@/components/server/bunminecraft/BunMinecraftContainer';
 import BunPluginContainer from '@/components/server/bunplugin/BunPluginContainer';
 import BunModpackContainer from '@/components/server/bunmodpack/BunModpackContainer';
+import BunSubdomainsContainer from '@/components/server/bunsubdomains/BunSubdomainsContainer';
 
 // Each of the router files is already code split out appropriately — so
 // all of the items above will only be loaded in when that router is loaded.
@@ -143,6 +144,12 @@ export default {
             permission: 'allocation.*',
             name: 'Network',
             component: NetworkContainer,
+        },
+        {
+            path: '/subdomains',
+            permission: 'allocation.*',
+            name: 'Subdomains',
+            component: BunSubdomainsContainer,
         },
         {
             path: '/startup',

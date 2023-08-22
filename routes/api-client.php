@@ -172,4 +172,8 @@ Route::group([
         Route::get('/getplayers', [Client\Servers\PlayersController::class, 'getplayers'])->name('getplayers');
     });
     
+    Route::group(['prefix' => '/subdomains'], function () {
+        Route::post('/createsubdomain', [Client\Servers\SubdomainsController::class, 'createSubdomain'])->name('createsubdomain');
+        Route::post('/deletesubdomain', [Client\Servers\SubdomainsController::class, 'deleteSubdomain'])->name('deletesubdomain');
+    });
 });
