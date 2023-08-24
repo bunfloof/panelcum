@@ -12,6 +12,26 @@ Thank you for your understanding and cooperation.
 
 # Modifications
 
+## Subdomain Creator
+
+- Uses cPanel's API to manage DNS.
+- Uses a hackaround to get serial through cPanel's error message and then reattempting 3 times.
+- cPanel doesn't have an endpoint to get the serial and using dns_get_record SOA to get serial has reliability issues due to DNS caches.
+
+**This modification requires cPanel and a MySQL/MariaDB database to work.**
+
+Append and fill the following to `.env`:
+```
+CPANEL_URL=
+CPANEL_PORT=
+CPANEL_AUTHORIZATION_VALUE=
+SUBDOMAIN_DATABASE_HOST=
+SUBDOMAIN_DATABASE_PORT=
+SUBDOMAIN_DATABASE_USER=
+SUBDOMAIN_DATABASE_PASSWORD=
+SUBDOMAIN_DATABASE_NAME=
+```
+
 ## 🤤🤤🤤 Modpack installer
 
 Remember to supply the API key and curseforge egg id in your .env
