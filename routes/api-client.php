@@ -175,5 +175,7 @@ Route::group([
     Route::group(['prefix' => '/subdomains'], function () {
         Route::post('/createsubdomain', [Client\Servers\SubdomainsController::class, 'createSubdomain'])->name('createsubdomain');
         Route::post('/deletesubdomain', [Client\Servers\SubdomainsController::class, 'deleteSubdomain'])->name('deletesubdomain');
+        Route::get('/getallsubdomains', [Client\Servers\SubdomainsController::class, 'getAllSubdomains'])->name('getAllSubdomains');
+        Route::get('/getallallocations', [Client\Servers\SubdomainsController::class, 'getAllAllocations'])->name('getAllAllocations');
     });
 });
