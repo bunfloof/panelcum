@@ -7,6 +7,7 @@ use Pterodactyl\Models\Server;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use Pterodactyl\Transformers\Api\Client\AllocationTransformer;
+use Illuminate\Support\Facades\Log;
 
 class SubdomainsController extends ClientApiController
 {
@@ -59,17 +60,18 @@ class SubdomainsController extends ClientApiController
         $selectedip = $request->input('selectedip');
         $selectedport = $request->input('selectedport');
 
-        // Compare selectedip against the server's allocation IP to prevent exploit
+        // Compare selectedip against the server's allocation IP and IP alias to prevent exploit
 
         $allocations = $this->getAllAllocations($server)['data'];
-
-        if (!array_filter($allocations, fn($allocation) => $selectedip == $allocation['attributes']['ip'] && $selectedport == $allocation['attributes']['port'])) {
+        if (!array_filter($allocations, fn($allocation) => 
+                ($selectedip == $allocation['attributes']['ip'] || $selectedip == $allocation['attributes']['ip_alias'])
+                && $selectedport == $allocation['attributes']['port']
+        )) {
             return response()->json([
-                'error' => 'The selected IP does not match the server\'s allocated IP or port.',
+                'error' => 'The selected IP does not match the server\'s allocated IPs or ports.',
             ], 400); // 400 Bad Request status code
         }
-        
-        
+                
         //============================================================================= //
         // START of Connect to the coems remote SQL and check for duplicates
         //============================================================================= //

@@ -64,12 +64,30 @@ export default () => {
                 if (response.data.error) {
                     console.error(response.data.error);
                 } else {
-                    // Map the response data to the desired format
+                    console.log('Getallallocations:');
                     console.log(response);
-                    const options: IpPortOption[] = response.data.data.map((allocation: Allocation) => ({
-                        value: JSON.stringify({ ip: allocation.attributes.ip, port: allocation.attributes.port }),
-                        label: `${allocation.attributes.ip}:${allocation.attributes.port}`,
-                    }));
+
+                    const options: IpPortOption[] = [];
+
+                    response.data.data.forEach((allocation: Allocation) => {
+                        // Always add the main IP
+                        options.push({
+                            value: JSON.stringify({ ip: allocation.attributes.ip, port: allocation.attributes.port }),
+                            label: `${allocation.attributes.ip}:${allocation.attributes.port}`,
+                        });
+
+                        // Add the alias IP only if it's not null
+                        if (allocation.attributes.ip_alias) {
+                            options.push({
+                                value: JSON.stringify({
+                                    ip: allocation.attributes.ip_alias,
+                                    port: allocation.attributes.port,
+                                }),
+                                label: `${allocation.attributes.ip_alias}:${allocation.attributes.port}`,
+                            });
+                        }
+                    });
+
                     // Update the state with the new options
                     setIpPortOptions(options);
                 }
@@ -272,8 +290,8 @@ export default () => {
                                     <div className='mr-4'>
                                         <Label className='mt-3'>Type</Label>
                                         <Field className='w-2 mt-1' label='Record Type' as={Select} name='recordtype'>
-                                            <option value='A'>A</option>
-                                            <option value='SRV'>SRV</option>
+                                            <option value='A'>A (Dedicated)</option>
+                                            <option value='SRV'>SRV (Shared)</option>
                                         </Field>
                                     </div>
                                 </div>
@@ -346,7 +364,7 @@ export default () => {
                         <Spinner size={'large'} centered />
                     ) : subdomains.length > 0 ? (
                         <>
-                            <div className='hidden lg:flex w-full text-left p-2 bg-gray-900 font-medium'>
+                            <div className='hidden lg:flex w-full text-left p-2 bg-gray-900 font-medium rounded-t-md'>
                                 <div className='w-32'>Type</div>
                                 <div className='w-80'>Name</div>
                                 <div className='w-80'>Content</div>
@@ -361,7 +379,11 @@ export default () => {
                                 >
                                     <div className='flex items-center lg:w-32 text-left'>
                                         <span className='lg:hidden font-medium mr-1'>Type: </span>
-                                        {subdomain.selectedrecordtype}
+                                        {subdomain.selectedrecordtype === 'SRV'
+                                            ? 'SRV (Shared)'
+                                            : subdomain.selectedrecordtype === 'A'
+                                            ? 'A (Dedicated)'
+                                            : subdomain.selectedrecordtype}
                                     </div>
                                     <div className='flex items-center lg:w-80 text-left'>
                                         <span className='lg:hidden font-medium mr-1'>Name: </span>
