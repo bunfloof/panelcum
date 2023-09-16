@@ -18,6 +18,7 @@ import BunMinecraftContainer from '@/components/server/bunminecraft/BunMinecraft
 import BunPluginContainer from '@/components/server/bunplugin/BunPluginContainer';
 import BunModpackContainer from '@/components/server/bunmodpack/BunModpackContainer';
 import BunSubdomainsContainer from '@/components/server/bunsubdomains/BunSubdomainsContainer';
+import HelpersContainer from '@/components/server/bunhelpers/HelpersContainer';
 
 // Each of the router files is already code split out appropriately — so
 // all of the items above will only be loaded in when that router is loaded.
@@ -96,6 +97,12 @@ export default {
             permission: 'file.*',
             name: 'Modpacks',
             component: BunModpackContainer,
+        },
+        {
+            path: '/helpers',
+            permission: 'file.*',
+            name: 'Helpers',
+            component: HelpersContainer,
         },
         {
             path: '/files',
