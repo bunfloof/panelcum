@@ -87,7 +87,7 @@ class ClientModpackController extends ClientApiController
         // Find the server with the given UUID.
         $server = $builder->where('uuid', $uuid)->firstOrFail();
     
-        $eggDetails = $this->getEggVars(15);
+        $eggDetails = $this->getEggVars(env('CURSEFORGE_GENERIC_EGG_ID'));
     
         $startup = [
             'egg_id' => env('CURSEFORGE_GENERIC_EGG_ID'),
