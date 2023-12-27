@@ -5,69 +5,7 @@
 ![GitHub Releases](https://img.shields.io/github/downloads/pterodactyl/panel/latest/total?style=for-the-badge)
 ![GitHub contributors](https://img.shields.io/github/contributors/pterodactyl/panel?style=for-the-badge)
 
-# Pterodactyl Panel with Bun's Coems
-All modifications and improvements made to this project are available for free and released under an open-source license. As a contributor, my only request is that you acknowledge my contributions and provide attribution when using this code. The typical protocol in the open-source community encourages and appreciates such acknowledgment. This can be done by linking back to this GitHub repository ([bunfloof/panelcum](https://github.com/bunfloof/panelcum)) in your project documentation or crediting my GitHub username in your project's credits section.
-
-Thank you for your understanding and cooperation.
-
-# Modifications
-
-## Subdomain Creator
-
-- Uses cPanel's API to manage DNS.
-- Uses a hackaround to get serial through cPanel's error message and then reattempting 3 times.
-- cPanel doesn't have an endpoint to get the serial and using dns_get_record SOA to get serial has reliability issues due to DNS caches.
-
-**This modification requires cPanel and a MySQL/MariaDB database to work.**
-
-Append and fill the following to `.env`:
-```
-CPANEL_URL=
-CPANEL_PORT=
-CPANEL_AUTHORIZATION_VALUE=
-SUBDOMAIN_DATABASE_HOST=
-SUBDOMAIN_DATABASE_PORT=
-SUBDOMAIN_DATABASE_USER=
-SUBDOMAIN_DATABASE_PASSWORD=
-SUBDOMAIN_DATABASE_NAME=
-```
-
-## 🤤🤤🤤 Modpack installer
-
-Remember to supply the API key and curseforge egg id in your .env
-
-```
-# BUN STUFF CURSEFORGE
-CURSEFORGE_API_KEY=
-CURSEFORGE_GENERIC_EGG_ID=
-```
-
-## 🤤🤤🤤 Plugins installer
-
-- idk no extra steps required unless API dies
-
-## 🤤🤤🤤 Container splitter
-
-Features:
-    
-- Create containers
-- Delete containers
-- Edit game type
-- Sync subuser permissions
-
-Manage resource limits for each user using set config options from WHMCS. Append and fill the following lines to `.env`:
-```
-WHMCS_HOST=
-WHMCS_PORT=
-WHMCS_DATABASE_USER=
-WHMCS_DATABASE_PASSWORD=
-WHMCS_DATABASE_NAME=
-```
-(It is recommended to create a READ-ONLY user with SELECT privileges only on your WHMCS MySQL database.)
-
-![Image](https://cdn1.cdn.pet/n6EXnlOvgvMCBFP.gif)
-
-# Description
+# Pterodactyl Panel
 
 Pterodactyl® is a free, open-source game server management panel built with PHP, React, and Go. Designed with security 
 in mind, Pterodactyl runs all game servers in isolated Docker containers while exposing a beautiful and intuitive
@@ -86,21 +24,20 @@ Stop settling for less. Make game servers a first class citizen on your platform
 
 ## Sponsors
 
-I would like to extend my sincere thanks to the following sponsors for helping fund Pterodactyl's developement.
+I would like to extend my sincere thanks to the following sponsors for helping fund Pterodactyl's development.
 [Interested in becoming a sponsor?](https://github.com/sponsors/matthewpi)
 
-| Company                                                   | About                                                                                                                                                                                                                           |
-|-----------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| [**WISP**](https://wisp.gg)                               | Extra features.                                                                                                                                                                                                                 |
-| [**RocketNode**](https://rocketnode.com/)                 | Innovative game server hosting combined with a straightforward control panel, affordable prices, and Rocket-Fast support.                                                                                                       |
-| [**Aussie Server Hosts**](https://aussieserverhosts.com/) | No frills Australian Owned and operated High Performance Server hosting for some of the most demanding games serving Australia and New Zealand.                                                                                 |
-| [**BisectHosting**](https://www.bisecthosting.com/)       | BisectHosting provides Minecraft, Valheim and other server hosting services with the highest reliability and lightning fast support since 2012.                                                                                 |
-| [**MineStrator**](https://minestrator.com/)               | Looking for the most highend French hosting company for your minecraft server? More than 24,000 members on our discord trust us. Give us a try!                                                                                 |
-| [**Skynode**](https://www.skynode.pro/)                   | Skynode provides blazing fast game servers along with a top-notch user experience. Whatever our clients are looking for, we're able to provide it!                                                                              |
-| [**VibeGAMES**](https://vibegames.net/)                   | VibeGAMES is a game server provider that specializes in DDOS protection for the games we offer. We have multiple locations in the US, Brazil, France, Germany, Singapore, Australia and South Africa.                           |
-| [**Pterodactyl Market**](https://pterodactylmarket.com/)  | Pterodactyl Market is a one-and-stop shop for Pterodactyl. In our market, you can find Add-ons, Themes, Eggs, and more for Pterodactyl.                                                                                         |
-| [**UltraServers**](https://ultraservers.com/)             | Deploy premium games hosting with the click of a button. Manage and swap games with ease and let us take care of the rest. We currently support Minecraft, Rust, ARK, 7 Days to Die, Garys MOD, CS:GO, Satisfactory and others. |
-| [**Realms Hosting**](https://realmshosting.com/)          | Want to build your Gaming Empire? Use Realms Hosting today to kick start your game server hosting with outstanding DDOS Protection, 24/7 Support, Cheap Prices and a Custom Control Panel.                                      |                                                                                                                                                                                                                                |
+| Company                                                               | About                                                                                                                                                                                                 |
+|-----------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [**WISP**](https://wisp.gg)                                           | Extra features.                                                                                                                                                                                       |
+| [**Aussie Server Hosts**](https://aussieserverhosts.com/)             | No frills Australian Owned and operated High Performance Server hosting for some of the most demanding games serving Australia and New Zealand.                                                       |
+| [**WemX**](https://wemx.net/)                                         | WemX helps automate your hosting company or SaaS business by automating billing, user management, authentication, and much more.                                                                      |
+| [**BisectHosting**](https://www.bisecthosting.com/)                   | BisectHosting provides Minecraft, Valheim and other server hosting services with the highest reliability and lightning fast support since 2012.                                                       |
+| [**MineStrator**](https://minestrator.com/)                           | Looking for the most highend French hosting company for your minecraft server? More than 24,000 members on our discord trust us. Give us a try!                                                       |
+| [**VibeGAMES**](https://vibegames.net/)                               | VibeGAMES is a game server provider that specializes in DDOS protection for the games we offer. We have multiple locations in the US, Brazil, France, Germany, Singapore, Australia and South Africa. |
+| [**DutchIS**](https://dutchis.net?ref=pterodactyl)                    | DutchIS provides instant infrastructure such as pay per use VPS hosting. Start your game hosting journey on DutchIS.                                                                                  |
+| [**Skoali**](https://skoali.com/)                                     | Skoali is a French company that hosts game servers and other types of services (VPS, WEB, Dedicated servers, ...). We also have a free plan for Minecraft and Garry's Mod.                            |
+| [**Rabbit Computing**](https://www.rabbitcomputing.com/link.php?id=5) | Rabbit Computing offers powerful VPS servers, highly available game hosting, and fully unlimited web hosting. Use code README for 20% off your first three months!                                    |
 
 ### Supported Games
 
