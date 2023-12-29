@@ -3,8 +3,6 @@ This file is a running track of new features and fixes to each version of the pa
 
 This project follows [Semantic Versioning](http://semver.org) guidelines.
 
-<<<<<<< HEAD
-=======
 ## v1.11.5
 ### Fixed
 * Rust egg using the wrong Docker image, breaking Rust modding frameworks.
@@ -27,7 +25,6 @@ This project follows [Semantic Versioning](http://semver.org) guidelines.
 * Fixes the ability to unset a server's description through the client API.
 * Fixed the MassActionBar on the server's file manager blocking elements below it, preventing them from being interacted with.
 
->>>>>>> merge-v1.11.5/master
 ## v1.11.3
 ### Changed
 * When updating a server's description through the client API, if no value is specified, the description will now remain unchanged.

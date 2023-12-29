@@ -1,4 +1,4 @@
-import React, { lazy } from 'react';
+import React, { lazy, useState, useContext, createContext, useEffect, ReactNode } from 'react';
 import { hot } from 'react-hot-loader/root';
 import { Route, Router, Switch } from 'react-router-dom';
 import { StoreProvider } from 'easy-peasy';
@@ -19,6 +19,69 @@ const DashboardRouter = lazy(() => import(/* webpackChunkName: "dashboard" */ '@
 const ServerRouter = lazy(() => import(/* webpackChunkName: "server" */ '@/routers/ServerRouter'));
 const AuthenticationRouter = lazy(() => import(/* webpackChunkName: "auth" */ '@/routers/AuthenticationRouter'));
 
+// Start of dark theme
+// Define a type for the context
+type ThemeContextType = {
+    theme: string;
+    toggleTheme: () => void;
+};
+
+// Provide a more meaningful initial value for the context
+export const ThemeContext = createContext<ThemeContextType>({
+    theme: 'light',
+    toggleTheme: () => {
+        console.log('Toggle theme function not implemented yet');
+    },
+});
+
+// Type the props for ThemeProvider
+type ThemeProviderProps = {
+    children: ReactNode;
+};
+
+const ThemeProvider = ({ children }: ThemeProviderProps) => {
+    // Define an array of available themes
+    const themes = ['light', 'pterodactyl', 'dragon'];
+    const [theme, setTheme] = useState(themes[0]); // Default to the first theme
+
+    const toggleTheme = () => {
+        // Find the index of the current theme
+        const currentThemeIndex = themes.indexOf(theme);
+        // Compute the index of the next theme
+        const nextThemeIndex = (currentThemeIndex + 1) % themes.length;
+        // Set the next theme
+        const newTheme = themes[nextThemeIndex];
+        setTheme(newTheme);
+        localStorage.setItem('theme', newTheme);
+        console.log(`Theme changed to: bun-theme-${newTheme}`); // Debugging log
+    };
+
+    useEffect(() => {
+        // Generate a list of all possible theme classes
+        const allThemeClasses = themes.map((t) => `bun-theme-${t}`);
+        // Remove all theme classes first
+        allThemeClasses.forEach((cls) => document.body.classList.remove(cls));
+        // Then add the current theme class
+        document.body.classList.add(`bun-theme-${theme}`);
+    }, [theme]);
+
+    useEffect(() => {
+        const localTheme = localStorage.getItem('theme');
+        if (localTheme && themes.includes(localTheme)) {
+            setTheme(localTheme);
+        }
+    }, []);
+
+    return <ThemeContext.Provider value={{ theme, toggleTheme }}>{children}</ThemeContext.Provider>;
+};
+
+const ThemeToggle = () => {
+    const { toggleTheme } = useContext(ThemeContext);
+
+    return <button onClick={toggleTheme}>Toggle Theme</button>;
+};
+
+// End of dark theme
 interface ExtendedWindow extends Window {
     SiteConfiguration?: SiteSettings;
     PterodactylUser?: {
@@ -59,35 +122,38 @@ const App = () => {
     return (
         <>
             <GlobalStylesheet />
-            <StoreProvider store={store}>
-                <ProgressBar />
-                <div css={tw`mx-auto w-auto`}>
-                    <Router history={history}>
-                        <Switch>
-                            <Route path={'/auth'}>
-                                <Spinner.Suspense>
-                                    <AuthenticationRouter />
-                                </Spinner.Suspense>
-                            </Route>
-                            <AuthenticatedRoute path={'/server/:id'}>
-                                <Spinner.Suspense>
-                                    <ServerContext.Provider>
-                                        <ServerRouter />
-                                    </ServerContext.Provider>
-                                </Spinner.Suspense>
-                            </AuthenticatedRoute>
-                            <AuthenticatedRoute path={'/'}>
-                                <Spinner.Suspense>
-                                    <DashboardRouter />
-                                </Spinner.Suspense>
-                            </AuthenticatedRoute>
-                            <Route path={'*'}>
-                                <NotFound />
-                            </Route>
-                        </Switch>
-                    </Router>
-                </div>
-            </StoreProvider>
+            <ThemeProvider>
+                <StoreProvider store={store}>
+                    <ThemeToggle />
+                    <ProgressBar />
+                    <div css={tw`mx-auto w-auto`}>
+                        <Router history={history}>
+                            <Switch>
+                                <Route path={'/auth'}>
+                                    <Spinner.Suspense>
+                                        <AuthenticationRouter />
+                                    </Spinner.Suspense>
+                                </Route>
+                                <AuthenticatedRoute path={'/server/:id'}>
+                                    <Spinner.Suspense>
+                                        <ServerContext.Provider>
+                                            <ServerRouter />
+                                        </ServerContext.Provider>
+                                    </Spinner.Suspense>
+                                </AuthenticatedRoute>
+                                <AuthenticatedRoute path={'/'}>
+                                    <Spinner.Suspense>
+                                        <DashboardRouter />
+                                    </Spinner.Suspense>
+                                </AuthenticatedRoute>
+                                <Route path={'*'}>
+                                    <NotFound />
+                                </Route>
+                            </Switch>
+                        </Router>
+                    </div>
+                </StoreProvider>
+            </ThemeProvider>
         </>
     );
 };

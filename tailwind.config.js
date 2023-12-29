@@ -14,9 +14,8 @@ const gray = {
 };
 
 module.exports = {
-    content: [
-        './resources/scripts/**/*.{js,ts,tsx}',
-    ],
+    darkMode: 'class', // enable dark mode
+    content: ['./resources/scripts/**/*.{js,ts,tsx}'],
     theme: {
         extend: {
             fontFamily: {
@@ -30,6 +29,13 @@ module.exports = {
                 gray: gray,
                 neutral: gray,
                 cyan: colors.cyan,
+                zinc: colors.zinc, // my added
+
+                // Define dark theme colors here
+                dark: {
+                    background: '#121212',
+                    text: '#f5f5f5',
+                },
             },
             fontSize: {
                 '2xs': '0.625rem',
@@ -37,7 +43,7 @@ module.exports = {
             transitionDuration: {
                 250: '250ms',
             },
-            borderColor: theme => ({
+            borderColor: (theme) => ({
                 default: theme('colors.neutral.400', 'currentColor'),
             }),
         },
@@ -47,5 +53,5 @@ module.exports = {
         require('@tailwindcss/forms')({
             strategy: 'class',
         }),
-    ]
+    ],
 };

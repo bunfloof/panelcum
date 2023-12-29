@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import { ServerContext } from '@/state/server';
 import { SocketEvent } from '@/components/server/events';
 import useWebsocketEvent from '@/plugins/useWebsocketEvent';
@@ -7,39 +7,45 @@ import { useChart, useChartTickLabel } from '@/components/server/console/chart';
 import { hexToRgba } from '@/lib/helpers';
 import { bytesToString } from '@/lib/formatters';
 import { CloudDownloadIcon, CloudUploadIcon } from '@heroicons/react/solid';
-import { theme } from 'twin.macro';
+import { theme as twTheme } from 'twin.macro';
 import ChartBlock from '@/components/server/console/ChartBlock';
 import Tooltip from '@/components/elements/tooltip/Tooltip';
+import { ThemeContext } from '@/components/App'; // Adjust the path to where App.tsx is located
 
 export default () => {
+    const { theme } = useContext(ThemeContext);
     const status = ServerContext.useStoreState((state) => state.status.value);
     const limits = ServerContext.useStoreState((state) => state.server.data!.limits);
     const previous = useRef<Record<'tx' | 'rx', number>>({ tx: -1, rx: -1 });
 
-    const cpu = useChartTickLabel('CPU', limits.cpu, '%', 2);
-    const memory = useChartTickLabel('Memory', limits.memory, 'MiB');
-    const network = useChart('Network', {
-        sets: 2,
-        options: {
-            scales: {
-                y: {
-                    ticks: {
-                        callback(value) {
-                            return bytesToString(typeof value === 'string' ? parseInt(value, 10) : value);
+    const cpu = useChartTickLabel('CPU', limits.cpu, '%', 2, theme);
+    const memory = useChartTickLabel('Memory', limits.memory, 'MiB', undefined, theme);
+    const network = useChart(
+        'Network',
+        {
+            sets: 2,
+            options: {
+                scales: {
+                    y: {
+                        ticks: {
+                            callback(value) {
+                                return bytesToString(typeof value === 'string' ? parseInt(value, 10) : value);
+                            },
                         },
                     },
                 },
             },
+            callback(opts, index) {
+                return {
+                    ...opts,
+                    label: !index ? 'Network In' : 'Network Out',
+                    borderColor: !index ? twTheme('colors.cyan.400') : twTheme('colors.yellow.400'),
+                    backgroundColor: hexToRgba(!index ? twTheme('colors.cyan.700') : twTheme('colors.yellow.700'), 0.5),
+                };
+            },
         },
-        callback(opts, index) {
-            return {
-                ...opts,
-                label: !index ? 'Network In' : 'Network Out',
-                borderColor: !index ? theme('colors.cyan.400') : theme('colors.yellow.400'),
-                backgroundColor: hexToRgba(!index ? theme('colors.cyan.700') : theme('colors.yellow.700'), 0.5),
-            };
-        },
-    });
+        theme
+    );
 
     useEffect(() => {
         if (status === 'offline') {

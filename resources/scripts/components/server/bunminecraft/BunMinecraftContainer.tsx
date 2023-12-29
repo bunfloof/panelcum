@@ -305,6 +305,7 @@ export default () => {
                         <Form>
                             {renderConfigKeys(configKeys, formikProps).length > 0 && (
                                 <CollapsibleTitledGreyBox title={'World'} containerCSS={tw`mb-4`} defaultOpen>
+                                    <div className='bg-blue-700 dark:bg-red-500 text-black dark:text-dark-text'>hi</div>
                                     <div css={tw`grid grid-cols-3 gap-4`}>
                                         {renderConfigKeys(configKeys, formikProps)}
                                     </div>

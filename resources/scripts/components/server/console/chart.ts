@@ -11,7 +11,7 @@ import {
 import { DeepPartial } from 'ts-essentials';
 import { useState } from 'react';
 import { deepmerge, deepmergeCustom } from 'deepmerge-ts';
-import { theme } from 'twin.macro';
+import { theme as twTheme } from 'twin.macro';
 import { hexToRgba } from '@/lib/helpers';
 
 ChartJS.register(LineElement, PointElement, Filler, LinearScale);
@@ -45,15 +45,15 @@ const options: ChartOptions<'line'> = {
             type: 'linear',
             grid: {
                 display: true,
-                color: theme('colors.gray.700'),
+                color: twTheme('colors.gray.700'),
                 drawBorder: false,
             },
             ticks: {
                 display: true,
                 count: 3,
-                color: theme('colors.gray.200'),
+                color: twTheme('colors.gray.200'),
                 font: {
-                    family: theme('fontFamily.sans'),
+                    family: twTheme('fontFamily.sans'),
                     size: 11,
                     weight: '400',
                 },
@@ -70,8 +70,21 @@ const options: ChartOptions<'line'> = {
     },
 };
 
-function getOptions(opts?: DeepPartial<ChartOptions<'line'>> | undefined): ChartOptions<'line'> {
-    return deepmerge(options, opts || {});
+// Bun-theme updated getOptions function
+function getOptions(theme: string, opts?: DeepPartial<ChartOptions<'line'>> | undefined): ChartOptions<'line'> {
+    const tickColor = theme === 'light' ? twTheme('colors.zinc.800') : twTheme('colors.gray.200');
+
+    const mergedOptions = deepmerge(options, {
+        scales: {
+            y: {
+                ticks: {
+                    color: tickColor,
+                },
+            },
+        },
+    });
+
+    return deepmerge(mergedOptions, opts || {});
 }
 
 type ChartDatasetCallback = (value: ChartDataset<'line'>, index: number) => ChartDataset<'line'>;
@@ -91,8 +104,8 @@ function getEmptyData(label: string, sets = 1, callback?: ChartDatasetCallback |
                         fill: true,
                         label,
                         data: Array(20).fill(-5),
-                        borderColor: theme('colors.cyan.400'),
-                        backgroundColor: hexToRgba(theme('colors.cyan.700'), 0.5),
+                        borderColor: twTheme('colors.cyan.400'),
+                        backgroundColor: hexToRgba(twTheme('colors.cyan.700'), 0.5),
                     },
                     index
                 )
@@ -108,8 +121,9 @@ interface UseChartOptions {
     callback?: ChartDatasetCallback | undefined;
 }
 
-function useChart(label: string, opts?: UseChartOptions) {
+function useChart(label: string, opts?: UseChartOptions, theme = 'light') {
     const options = getOptions(
+        theme,
         typeof opts?.options === 'number' ? { scales: { y: { min: 0, suggestedMax: opts.options } } } : opts?.options
     );
     const [data, setData] = useState(getEmptyData(label, opts?.sets || 1, opts?.callback));
@@ -139,22 +153,26 @@ function useChart(label: string, opts?: UseChartOptions) {
     return { props: { data, options }, push, clear };
 }
 
-function useChartTickLabel(label: string, max: number, tickLabel: string, roundTo?: number) {
-    return useChart(label, {
-        sets: 1,
-        options: {
-            scales: {
-                y: {
-                    suggestedMax: max,
-                    ticks: {
-                        callback(value) {
-                            return `${roundTo ? Number(value).toFixed(roundTo) : value}${tickLabel}`;
+function useChartTickLabel(label: string, max: number, tickLabel: string, roundTo?: number, theme = 'light') {
+    return useChart(
+        label,
+        {
+            sets: 1,
+            options: {
+                scales: {
+                    y: {
+                        suggestedMax: max,
+                        ticks: {
+                            callback(value) {
+                                return `${roundTo ? Number(value).toFixed(roundTo) : value}${tickLabel}`;
+                            },
                         },
                     },
                 },
             },
         },
-    });
+        theme
+    );
 }
 
 export { useChart, useChartTickLabel, getOptions, getEmptyData };

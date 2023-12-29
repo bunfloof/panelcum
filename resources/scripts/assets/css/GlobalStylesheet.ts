@@ -7,6 +7,35 @@ export default createGlobalStyle`
         letter-spacing: 0.015em;
     }
 
+    .bun-theme-light {
+        ${tw`font-sans bg-zinc-50 text-zinc-900`};
+    }
+
+    .bun-theme-light body {
+        ${tw`font-sans bg-zinc-800`};
+    }
+
+    .bun-theme-light .bg-gray-600 {
+        ${tw`bg-zinc-200`};
+    }
+    
+    .bun-theme-light .bg-gray-700 {
+        background-color: #E4E4E7;
+    }
+
+    .bun-theme-light .text-gray-200 {
+        ${tw`text-zinc-900`};
+    }
+
+    .bun-theme-light .text-gray-50 {
+        ${tw`text-zinc-800`};
+    }
+
+    .bun-theme-light .text-neutral-300 {
+        ${tw`text-zinc-800`};
+    }
+    
+
     h1, h2, h3, h4, h5, h6 {
         ${tw`font-medium tracking-normal font-header`};
     }
