@@ -75,3 +75,7 @@
         @apply bg-red-600/75 text-red-50/75;
     }
 }
+
+:global(.bun-theme-light) .danger {
+    @apply bg-red-600 text-gray-50;
+}

@@ -54,5 +54,50 @@ class ModpacksController extends ClientApiController
             return response()->json(['error' => 'An error occurred while processing your request.'], 500);
         }
     }
+
+    public function getMod(Request $request)
+    {
+        try {
+            $curseForge = new CurseForgeAPI();
+
+            $modId = $request->input('modId');
+            if (!$modId) {
+                return response()->json(['error' => 'Missing required parameter: modId'], 400);
+            }
+
+            $result = $curseForge->getMod($modId);
+
+            return response()->json(['result' => $result]);
+        } catch (\Exception $e) {
+            Log::error('getMod failed with exception: ', [
+                'exception' => $e->getMessage(),
+            ]);
+
+            return response()->json(['error' => 'An error occurred while processing your request.'], 500);
+        }
+    }
+
+    public function getModFile(Request $request)
+    {
+        try {
+            $curseForge = new CurseForgeAPI();
+
+            $modId = $request->input('modId');
+            $fileId = $request->input('fileId');
+            if (!$modId || !$fileId) {
+                return response()->json(['error' => 'Missing required parameter(s): modId, fileId'], 400);
+            }
+
+            $result = $curseForge->getModFile($modId, $fileId);
+
+            return response()->json(['result' => $result]);
+        } catch (\Exception $e) {
+            Log::error('getModFile failed with exception: ', [
+                'exception' => $e->getMessage(),
+            ]);
+
+            return response()->json(['error' => 'An error occurred while processing your request.'], 500);
+        }
+    }
     
 }

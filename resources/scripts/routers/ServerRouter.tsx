@@ -77,7 +77,7 @@ export default () => {
             ) : (
                 <>
                     <CSSTransition timeout={150} classNames={'fade'} appear in>
-                        <SubNavigation>
+                        <SubNavigation data-theme-target='sub-navigation'>
                             <div>
                                 {routes.server
                                     .filter((route) => !!route.name)

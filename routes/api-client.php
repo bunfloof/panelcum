@@ -61,6 +61,8 @@ Route::prefix('/plugins')->middleware(AccountSubject::class)->group(function () 
 Route::prefix('/modpacks')->middleware(AccountSubject::class)->group(function () {
     Route::get('/getmodssearch', [Client\Servers\ModpacksController::class, 'getModsSearch'])->name('getModsSearch');
     Route::get('/getmodfiles', [Client\Servers\ModpacksController::class, 'getModFiles'])->name('getModFiles');
+    Route::get('/getmod', [Client\Servers\ModpacksController::class, 'getMod'])->name('getMod');
+    Route::get('/getmodfile', [Client\Servers\ModpacksController::class, 'getModFile'])->name('getModFile');
     Route::post('/editserver/{uuid}/{projectId}/{versionId}', [Client\ClientModpackController::class, 'editServer'])->name('editServer');
 });
 

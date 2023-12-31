@@ -9,4 +9,16 @@ export default styled.div<{ $hoverable?: boolean }>`
     & .icon {
         ${tw`rounded-full w-16 flex items-center justify-center bg-neutral-500 p-3`};
     }
+
+    .bun-theme-light & {
+        ${tw`bg-zinc-200 text-zinc-900`} // Light theme background and text colors
+
+        &:hover {
+            ${tw`text-zinc-600`}// Light theme hover background and text colors
+        }
+
+        & .icon {
+            ${tw`rounded-full w-16 flex items-center justify-center bg-zinc-500 p-3`};
+        }
+    }
 `;

@@ -56,11 +56,12 @@ const ModpackExpanded = ({ modId }: ModpackExpandedProps) => {
                     },
                 });
 
-                const modsWithServerPackFileId = response.data.results.data.filter(
-                    (mod: ModData) => mod.serverPackFileId !== undefined
-                );
+                // const modsWithServerPackFileId = response.data.results.data.filter(
+                //     (mod: ModData) => mod.serverPackFileId !== undefined
+                // );
 
-                setMods(modsWithServerPackFileId);
+                // console.log(response.data.results.data)
+                setMods(response.data.results.data);
                 setPagination({
                     ...response.data.results.pagination,
                     index: index,

@@ -23,9 +23,9 @@ interface Params {
 }
 
 const CronBox = ({ title, value }: { title: string; value: string }) => (
-    <div css={tw`bg-neutral-700 rounded p-3`}>
-        <p css={tw`text-neutral-300 text-sm`}>{title}</p>
-        <p css={tw`text-xl font-medium text-neutral-100`}>{value}</p>
+    <div className='bg-neutral-700 rounded p-3'>
+        <p className='text-neutral-300 text-sm'>{title}</p>
+        <p className='text-xl font-medium text-neutral-100'>{value}</p>
     </div>
 );
 

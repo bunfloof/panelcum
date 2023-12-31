@@ -34,3 +34,12 @@
         @apply bg-primary-500 text-primary-50;
     }
 }
+
+:global(.bun-theme-light) .panel {
+    @apply relative bg-zinc-300 rounded max-w-xl w-full mx-auto shadow-lg text-left;
+    @apply ring-4 ring-zinc-400 ring-opacity-80;
+}
+
+:global(.bun-theme-light) .title {
+    @apply font-header text-xl font-medium mb-2 text-zinc-900 pr-4;
+}

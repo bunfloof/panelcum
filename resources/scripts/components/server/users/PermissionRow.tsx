@@ -28,6 +28,16 @@ const Container = styled.label`
             ${tw`border-0`};
         }
     }
+
+    .bun-theme-light & {
+        &:not(.disabled) {
+            ${tw`cursor-pointer`};
+
+            &:hover {
+                ${tw`border-zinc-300 bg-zinc-400`};
+            }
+        }
+    }
 `;
 
 interface Props {

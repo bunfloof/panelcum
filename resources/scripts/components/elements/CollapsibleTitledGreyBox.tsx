@@ -21,10 +21,11 @@ const CollapsibleTitledGreyBox = ({ icon, title, children, defaultOpen = false, 
     }, []);
 
     return (
-        <div css={[tw`rounded shadow-md bg-neutral-700`, containerCSS]}>
+        <div css={[tw`rounded shadow-md bg-neutral-700`, containerCSS]} data-theme-target='collapsible-box'>
             <div
                 css={tw`bg-neutral-900 rounded-t p-2 border-b border-black cursor-pointer hover:bg-neutral-600 transition-colors duration-200`}
                 onClick={toggleOpen}
+                data-theme-target='collapsible-box-2'
             >
                 {typeof title === 'string' ? (
                     <p css={tw`text-sm uppercase`}>

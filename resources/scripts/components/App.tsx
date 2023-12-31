@@ -78,7 +78,11 @@ const ThemeProvider = ({ children }: ThemeProviderProps) => {
 const ThemeToggle = () => {
     const { toggleTheme } = useContext(ThemeContext);
 
-    return <button onClick={toggleTheme}>Toggle Theme</button>;
+    return (
+        <button onClick={toggleTheme} className='hidden'>
+            Toggle Theme
+        </button>
+    );
 };
 
 // End of dark theme

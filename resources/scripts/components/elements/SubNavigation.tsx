@@ -50,26 +50,19 @@ const SubNavigation = styled.div`
 
             &:hover {
                 ${tw`text-neutral-100`};
-<<<<<<< HEAD
 
                 &::before {
                     ${tw`bg-neutral-500`};
                 }
-=======
->>>>>>> merge-v1.11.5/master
             }
 
             &:active,
             &.active {
                 ${tw`text-neutral-100`};
-<<<<<<< HEAD
 
                 &::after {
                     opacity: 1;
                 }
-=======
-                box-shadow: inset 0 -2px ${theme`colors.cyan.600`.toString()};
->>>>>>> merge-v1.11.5/master
             }
         }
     }

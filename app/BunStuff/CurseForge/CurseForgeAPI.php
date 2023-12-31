@@ -73,4 +73,42 @@ class CurseForgeAPI
             return ['error' => $e->getMessage()];
         }
     }    
+
+    public function getMod(int $modId)
+    {
+        $headers = [
+            'Accept' => 'application/json',
+            'x-api-key' => $this->apiKey,
+        ];
+
+        try {
+            $response = $this->client->request('GET', 'mods/'.$modId, [
+                'headers' => $headers,
+            ]);
+
+            return json_decode($response->getBody()->getContents(), true);
+        } catch (BadResponseException $e) {
+            // handle exception or api errors.
+            return ['error' => $e->getMessage()];
+        }
+    }
+
+    public function getModFile(int $modId, int $fileId)
+    {
+        $headers = [
+            'Accept' => 'application/json',
+            'x-api-key' => $this->apiKey,
+        ];
+
+        try {
+            $response = $this->client->request('GET', "mods/$modId/files/$fileId", [
+                'headers' => $headers,
+            ]);
+
+            return json_decode($response->getBody()->getContents(), true);
+        } catch (BadResponseException $e) {
+            return ['error' => $e->getMessage()];
+        }
+    }
+
 }
