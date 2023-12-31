@@ -28,7 +28,7 @@ type ThemeContextType = {
 
 // Provide a more meaningful initial value for the context
 export const ThemeContext = createContext<ThemeContextType>({
-    theme: 'light',
+    theme: 'pterodactyl',
     toggleTheme: () => {
         console.log('Toggle theme function not implemented yet');
     },
@@ -42,7 +42,7 @@ type ThemeProviderProps = {
 const ThemeProvider = ({ children }: ThemeProviderProps) => {
     // Define an array of available themes
     const themes = ['light', 'pterodactyl', 'dragon'];
-    const [theme, setTheme] = useState(themes[0]); // Default to the first theme
+    const [theme, setTheme] = useState(themes[1]); // Default to the second theme
 
     const toggleTheme = () => {
         // Find the index of the current theme

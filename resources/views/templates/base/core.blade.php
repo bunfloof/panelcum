@@ -1,5 +1,5 @@
 @extends('templates/wrapper', [
-    'css' => ['body' => 'bun-theme-light'],
+    'css' => ['body' => 'bun-theme-pterodactyl'],
 ])
 
 @section('container')
@@ -15,7 +15,7 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        var theme = localStorage.getItem('theme') || 'bun-theme-light';
+        var theme = localStorage.getItem('theme') || 'bun-theme-pterodactyl';
         var allThemeClasses = ['bun-theme-light', 'bun-theme-dark', 'bun-theme-pterodactyl', 'bun-theme-dragon'];
         allThemeClasses.forEach(function(cls) {
             document.body.classList.remove(cls);
