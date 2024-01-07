@@ -546,74 +546,43 @@ class ClientSplitterController extends ClientApiController
             $primaryServerItem = $primaryserver->firstOrFail();
             //return ['primtest' => $primaryServerItem->toArray()];
             
-
-            $serverData = [
-                'name' => $values['name'],
-                'user' => (int) $primaryServerItem->owner_id,
-                'egg' => (int) $values['egg'],
-                'docker_image' => $eggDetails['eggDockerImage'],
-                'startup' => $eggDetails['eggStartup'],
-                'oom_disabled' => false,
-                'limits' => [
-                    'memory' => (int) $values['ram'],
-                    'swap' => 0,
-                    'io' => 500,
-                    'cpu' => 800,
-                    'disk' => (int) $values['disk'],
-                ],
-                'feature_limits' => [
-                    'databases' => 10,
-                    'allocations' => 10,
-                    'backups' => 3,
-                ],
-                'deploy' => [
-                    'locations' => [(int) $primaryServerItem->node->location_id],
-                    'dedicated_ip' => false,
-                    'port_range' => ['25565-25700'],
-                ],
-                'environment' => $eggDetails['eggEnvVars'],
-                'start_on_completion' => true,
+            $requestData = [
                 'external_id' => "{$primaryExternalId}sub" . ($maxNumber + 1),
+                'name' => $values['name'],
+                //'description' => '',
+                'owner_id' => $primaryServerItem->owner_id,
+                'egg_id' => $values['egg'],
+                'image' => $eggDetails['eggDockerImage'],
+                'startup' => $eggDetails['eggStartup'],
+                'environment' => $eggDetails['eggEnvVars'],
+                'skip_scripts' => false,
+                'oom_disabled' => false,
+                'memory' => $values['ram'],
+                'swap' => 0,
+                'disk' =>  $values['disk'],
+                'io' => 500,
+                'cpu' => 800,
+                'threads' => '',
+                'database_limit' => 10,
+                'allocation_limit' => 10,
+                'backup_limit' => 3,
+                //'allocation_id' => null,
+                'allocation_additional' => [0],
+                'start_on_completion' => true,
             ];
 
-            $httpProtocol = getenv('SPLITTER_HTTP_OR_HTTPS');
-            $serverAddress = getenv('SPLITTER_SERVER_ADDRESS');
-            $apiToken = getenv('SPLITTER_API_KEY');
+            $deploymentObject = new DeploymentObject();
+            $deploymentObject->setLocations([(int) $primaryServerItem->node->location_id]);
+            $deploymentObject->setDedicated(false);
+            $deploymentObject->setPorts(['25565-25700']);
 
-            $jsonData = json_encode($serverData);
-
-            $url = $httpProtocol . '://' . $serverAddress . '/api/application/servers';
-
-            $curl = curl_init();
-            curl_setopt($curl, CURLOPT_URL, $url);
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
-            curl_setopt($curl, CURLOPT_POSTFIELDS, $jsonData);
-            curl_setopt($curl, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2);
-            
-            $headers = [
-                "Authorization: Bearer " . $apiToken,
-                "Accept: Application/vnd.pterodactyl.v1+json",
-                "Content-Type: application/json",
-                "Content-Length: " . strlen($jsonData)
-            ];
-            
-            curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-            
-            $response = curl_exec($curl);
-            $httpStatusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-            curl_close($curl);
-            
-            if ($httpStatusCode !== 201) {
-                return ['status' => 'error', 'message' => 'Failed to create (Splitter) the server', 'response' => $response];
-            }
-            
             return [
                 'object' => 'Created',
-                'data' => json_decode($response, true)
-            ];
+                'data' => $this->serverCreationService->handle($requestData, $deploymentObject),
+            ];        
 
             $lock->release();
+
         } else {
             return ['status' => 'error', 'message' => "Another server creation action is currently being processed, please try again later."];
         }
